@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rentalworks Sdn Bhd — Quote Generator</title>
+<title>Rentalworks Sdn Bhd - Quote Generator</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -19,7 +19,7 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);font-size:14px;-webkit-font-smoothing:antialiased;}
 
-/* ── HEADER ─────────────────────────── */
+/* -- HEADER --------------------------- */
 header{background:var(--red);height:54px;padding:0 32px;display:flex;align-items:center;justify-content:space-between;}
 .brand{display:flex;align-items:center;gap:10px;}
 .brand-name{color:#fff;font-size:15px;font-weight:600;}
@@ -31,16 +31,16 @@ header{background:var(--red);height:54px;padding:0 32px;display:flex;align-items
 .dot{width:7px;height:7px;border-radius:50%;background:#999;flex-shrink:0;}
 .dot.ok{background:#4CAF88;}.dot.err{background:#F66;}
 
-/* ── LAYOUT ─────────────────────────── */
+/* -- LAYOUT --------------------------- */
 .wrap{max-width:860px;margin:0 auto;padding:28px 20px 80px;}
 
-/* ── CARDS ──────────────────────────── */
+/* -- CARDS ---------------------------- */
 .card{background:var(--white);border-radius:12px;border:1px solid var(--border);margin-bottom:14px;}
 .ch{padding:14px 22px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
 .ct{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;color:var(--mid);}
 .cb{padding:22px;}
 
-/* ── FORM FIELDS ────────────────────── */
+/* -- FORM FIELDS ---------------------- */
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:0 16px;}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 16px;}
 .g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0 16px;}
@@ -62,7 +62,7 @@ select{
   background-repeat:no-repeat;background-position:right 10px center;padding-right:28px;cursor:pointer;
 }
 
-/* ── QUOTE TYPE ─────────────────────── */
+/* -- QUOTE TYPE ----------------------- */
 .qtype-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .qtype-opt input[type=radio]{display:none;}
 .qtype-card{display:flex;align-items:flex-start;gap:12px;padding:16px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;background:var(--surface);transition:all .15s;}
@@ -75,7 +75,7 @@ select{
 .qtype-name{font-size:14px;font-weight:600;color:var(--text);display:block;margin-bottom:2px;}
 .qtype-sub{font-size:11.5px;color:var(--mid);display:block;}
 
-/* ── COUNTRY CARDS ──────────────────── */
+/* -- COUNTRY CARDS -------------------- */
 .country-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
 .cc{display:flex;align-items:center;gap:12px;padding:14px 16px;border:2px solid var(--border);border-radius:10px;cursor:pointer;background:var(--surface);transition:all .15s;}
 .cc:hover{border-color:#C4C4BC;}
@@ -86,7 +86,7 @@ select{
 .cc-name{font-size:14px;font-weight:600;color:var(--text);}
 .cc-info{font-size:11px;color:var(--mid);margin-top:2px;}
 
-/* ── LINE ITEMS ─────────────────────── */
+/* -- LINE ITEMS ----------------------- */
 .item-list{display:flex;flex-direction:column;gap:12px;margin-bottom:14px;}
 
 .item-card{
@@ -207,7 +207,7 @@ select{
 }
 .item-desc-area textarea:focus{background:#fff;}
 
-/* ── TOTALS ─────────────────────────── */
+/* -- TOTALS --------------------------- */
 .totals-wrap{display:flex;justify-content:flex-end;margin-top:16px;}
 .totals-box{min-width:300px;border:1px solid var(--border);border-radius:10px;overflow:hidden;}
 .trow{display:flex;justify-content:space-between;align-items:center;padding:9px 16px;font-size:13px;border-bottom:1px solid var(--border);}
@@ -218,7 +218,7 @@ select{
 .trow.grand .tl{color:rgba(255,255,255,.5);font-size:12px;}
 .trow.grand .tv{color:#fff;font-size:18px;font-weight:700;}
 
-/* ── BUTTONS ────────────────────────── */
+/* -- BUTTONS -------------------------- */
 .btn{display:inline-flex;align-items:center;gap:7px;padding:9px 20px;border-radius:8px;border:none;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .14s;}
 .btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--mid);}
 .btn-outline:hover{border-color:#C0BFB8;color:var(--text);}
@@ -239,14 +239,14 @@ select{
 }
 .add-item-btn:hover{border-color:var(--red);color:var(--red);background:var(--red-lt);}
 
-/* ── ALERTS ─────────────────────────── */
+/* -- ALERTS --------------------------- */
 .alert{border-radius:10px;padding:12px 16px;margin-bottom:14px;font-size:13px;line-height:1.6;display:none;}
 .alert.ok{background:var(--green-bg);border:1px solid var(--green-br);color:var(--green);display:block;}
 .alert.err{background:var(--red-lt);border:1px solid #F5BABB;color:var(--red);display:block;}
 .alert.loading{background:var(--amber-bg);border:1px solid var(--amber-br);color:var(--amber);display:block;}
 .alert a{color:var(--hs);font-weight:600;text-decoration:none;}
 
-/* ── HUBSPOT PANEL ──────────────────── */
+/* -- HUBSPOT PANEL -------------------- */
 .hs-panel{display:none;position:fixed;top:54px;right:0;width:370px;background:#fff;border-left:1px solid var(--border);border-bottom:1px solid var(--border);border-bottom-left-radius:12px;box-shadow:-3px 4px 22px rgba(0,0,0,.10);z-index:100;padding:20px;}
 .hs-panel.open{display:block;}
 .hs-ptitle{font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;}
@@ -263,7 +263,7 @@ select{
 .hs-help a{color:var(--hs);text-decoration:none;}
 .hs-close{position:absolute;top:13px;right:14px;background:none;border:none;font-size:18px;color:var(--mid);cursor:pointer;}
 
-/* ── PRINT ──────────────────────────── */
+/* -- PRINT ---------------------------- */
 @page{size:A4;margin:13mm 15mm;}
 @media screen{.po{display:none!important;}}
 @media print{
@@ -293,16 +293,16 @@ select{
 
 <!-- HubSpot Panel -->
 <div class="hs-panel np" id="hs-panel">
-  <button class="hs-close" onclick="toggleHsPanel()">×</button>
-  <div class="hs-ptitle">🔗 HubSpot Integration</div>
+  <button class="hs-close" onclick="toggleHsPanel()">x</button>
+  <div class="hs-ptitle"> HubSpot Integration</div>
   <div class="hs-psub">Your HubSpot token is stored securely on the server. Click Test to verify the connection is working.</div>
   <button class="test-btn" style="width:100%;padding:10px;border-radius:8px;margin-bottom:10px;" onclick="testConn()">Test Connection</button>
   <div class="hs-fb" id="hs-fb"></div>
   <div class="hs-help" style="margin-top:8px;">
     <strong>For the admin setting this up:</strong><br>
-    In Netlify → Site Settings → Environment Variables, add:<br>
+    In Netlify -> Site Settings -> Environment Variables, add:<br>
     <code style="background:#F0F0EC;padding:2px 6px;border-radius:4px;font-size:11px;">HUBSPOT_TOKEN</code> = your Private App token<br><br>
-    Need a token? HubSpot → Settings → Integrations → Private Apps.<br>
+    Need a token? HubSpot -> Settings -> Integrations -> Private Apps.<br>
     Scopes needed: <code style="background:#F0F0EC;padding:2px 4px;border-radius:4px;font-size:10px;">crm.objects.contacts.write</code> <code style="background:#F0F0EC;padding:2px 4px;border-radius:4px;font-size:10px;">crm.objects.deals.write</code> <code style="background:#F0F0EC;padding:2px 4px;border-radius:4px;font-size:10px;">crm.objects.notes.write</code> <code style="background:#F0F0EC;padding:2px 4px;border-radius:4px;font-size:10px;">crm.objects.associations.write</code>
   </div>
 </div>
@@ -314,8 +314,8 @@ select{
   <!-- 1. QUOTE TYPE -->
   <div class="card">
     <div class="ch">
-      <span class="ct">1 — Quote Type</span>
-      <span style="font-size:11px;color:var(--mid)">Select first — determines line item format</span>
+      <span class="ct">1 - Quote Type</span>
+      <span style="font-size:11px;color:var(--mid)">Select first - determines line item format</span>
     </div>
     <div class="cb">
       <div class="qtype-row">
@@ -325,7 +325,7 @@ select{
             <div class="qtype-radio"></div>
             <div>
               <span class="qtype-name">Rental / Leasing</span>
-              <span class="qtype-sub">Monthly instalments — Months × Qty × Price/Month</span>
+              <span class="qtype-sub">Monthly instalments - Months x Qty x Price/Month</span>
             </div>
           </div>
         </label>
@@ -335,7 +335,7 @@ select{
             <div class="qtype-radio"></div>
             <div>
               <span class="qtype-name">Purchase / HW Supply</span>
-              <span class="qtype-sub">One-time supply — Qty × Unit Price with optional discount</span>
+              <span class="qtype-sub">One-time supply - Qty x Unit Price with optional discount</span>
             </div>
           </div>
         </label>
@@ -346,7 +346,7 @@ select{
   <!-- 2. COUNTRY & CURRENCY -->
   <div class="card">
     <div class="ch">
-      <span class="ct">2 — Country &amp; Currency</span>
+      <span class="ct">2 - Country &amp; Currency</span>
       <span style="font-size:11px;color:var(--mid)">Affects all amounts and tax rate</span>
     </div>
     <div class="cb">
@@ -369,7 +369,7 @@ select{
 
   <!-- 3. QUOTE DETAILS -->
   <div class="card">
-    <div class="ch"><span class="ct">3 — Quote Details</span></div>
+    <div class="ch"><span class="ct">3 - Quote Details</span></div>
     <div class="cb">
       <div class="g4">
         <div class="fld"><label class="lb">Quote No.</label><input type="text" id="qno" value="RW-Q-1086"></div>
@@ -386,7 +386,7 @@ select{
 
   <!-- 4. CUSTOMER -->
   <div class="card">
-    <div class="ch"><span class="ct">4 — Customer</span></div>
+    <div class="ch"><span class="ct">4 - Customer</span></div>
     <div class="cb">
       <div class="g2">
         <div class="fld"><label class="lb">Company Name</label><input type="text" id="cco" placeholder="Company Sdn Bhd"></div>
@@ -405,7 +405,7 @@ select{
   <!-- 5. LINE ITEMS -->
   <div class="card">
     <div class="ch">
-      <span class="ct">5 — Line Items</span>
+      <span class="ct">5 - Line Items</span>
       <span style="font-size:11px;color:var(--mid)">Shaded cells are calculated automatically</span>
     </div>
     <div class="cb" style="padding-bottom:16px;">
@@ -413,9 +413,9 @@ select{
       <button class="add-item-btn np" onclick="addItem()">+ Add line item</button>
       <div class="totals-wrap">
         <div class="totals-box">
-          <div class="trow"><span class="tl">Total Excl. Tax</span><span class="tv" id="t-excl">—</span></div>
-          <div class="trow"><span class="tl" id="t-tax-lbl">Service Tax 8%</span><span class="tv" id="t-tax">—</span></div>
-          <div class="trow grand"><span class="tl">Total Amount</span><span class="tv" id="t-grand">—</span></div>
+          <div class="trow"><span class="tl">Total Excl. Tax</span><span class="tv" id="t-excl">-</span></div>
+          <div class="trow"><span class="tl" id="t-tax-lbl">Service Tax 8%</span><span class="tv" id="t-tax">-</span></div>
+          <div class="trow grand"><span class="tl">Total Amount</span><span class="tv" id="t-grand">-</span></div>
         </div>
       </div>
     </div>
@@ -423,13 +423,13 @@ select{
 
   <!-- 6. REMARKS -->
   <div class="card">
-    <div class="ch"><span class="ct">6 — Remarks</span></div>
+    <div class="ch"><span class="ct">6 - Remarks</span></div>
     <div class="cb"><textarea id="remarks" rows="3" placeholder="e.g. Price quoted based on quantity for year 2025. Price for 2026 may change..."></textarea></div>
   </div>
 
   <!-- 7. T&C -->
   <div class="card">
-    <div class="ch"><span class="ct">7 — Terms &amp; Conditions</span></div>
+    <div class="ch"><span class="ct">7 - Terms &amp; Conditions</span></div>
     <div class="cb"><textarea id="tandc" rows="4"></textarea></div>
   </div>
 
@@ -444,9 +444,9 @@ select{
 <div id="po" class="po"></div>
 
 <script>
-/* ═══════════════════════════════
+/* ===============================
    CURRENCY
-═══════════════════════════════ */
+=============================== */
 const CURR = {
   MYR:{ sym:'RM',  code:'MYR', taxLbl:'Service Tax 8%', tax:0.08, dec:2 },
   SGD:{ sym:'SGD', code:'SGD', taxLbl:'GST 9%',         tax:0.09, dec:2 },
@@ -474,9 +474,9 @@ function setCurrency(code){
   recalc();
 }
 
-/* ═══════════════════════════════
+/* ===============================
    PAYMENT TERMS
-═══════════════════════════════ */
+=============================== */
 const TERMS = {
   rental:   ['Monthly Prepayment','Quarterly Prepayment','Half Yearly Prepayment','Yearly Prepayment'],
   purchase: ['Advance Payment','Upon Delivery','30 Days','14 Days','Cash on Delivery (COD)'],
@@ -493,18 +493,18 @@ function refreshTerms(){
   });
 }
 
-/* ═══════════════════════════════
+/* ===============================
    HELPERS
-═══════════════════════════════ */
+=============================== */
 let iid = 0;
 const $ = id => document.getElementById(id);
 const gv = id => $(id) ? $(id).value.trim() : '';
 const fmtDate = d => d.toISOString().slice(0,10);
 const isRental = () => document.querySelector('input[name=qt]:checked').value === 'rental';
 
-/* ═══════════════════════════════
+/* ===============================
    INIT
-═══════════════════════════════ */
+=============================== */
 window.onload = () => {
   const now = new Date(), later = new Date(now);
   later.setDate(later.getDate()+30);
@@ -530,9 +530,9 @@ function onTypeChange(){
   recalc();
 }
 
-/* ═══════════════════════════════
+/* ===============================
    ADD ITEM
-═══════════════════════════════ */
+=============================== */
 function addItem(){
   const id = ++iid;
   const rental = isRental();
@@ -542,7 +542,7 @@ function addItem(){
   card.className = 'item-card';
   card.id = 'ic-' + id;
 
-  /* ── ROW 1: Name ── */
+  /* -- ROW 1: Name -- */
   const nameRow = document.createElement('div');
   nameRow.className = 'item-name-row';
 
@@ -553,7 +553,7 @@ function addItem(){
   const nameInp = document.createElement('input');
   nameInp.type = 'text';
   nameInp.className = 'item-name-input';
-  nameInp.placeholder = rental ? 'e.g. MacBook Pro 14 M4 Pro — 36 Months Rental' : 'e.g. FortiGate-101F 22 x GE RJ45 ports';
+  nameInp.placeholder = rental ? 'e.g. MacBook Pro 14 M4 Pro - 36 Months Rental' : 'e.g. FortiGate-101F 22 x GE RJ45 ports';
   nameInp.setAttribute('data-role','name');
   nameInp.oninput = recalc;
 
@@ -566,7 +566,7 @@ function addItem(){
   nameRow.appendChild(nameInp);
   nameRow.appendChild(delBtn);
 
-  /* ── ROW 2: Fields ── */
+  /* -- ROW 2: Fields -- */
   const fieldsRow = document.createElement('div');
   fieldsRow.className = 'item-fields-row';
 
@@ -596,12 +596,12 @@ function addItem(){
     const d = document.createElement('div');
     d.className = 'item-computed' + (highlight ? ' highlight' : '');
     d.id = id;
-    d.textContent = '—';
+    d.textContent = '-';
     return d;
   }
 
   if(rental){
-    // Rental: Months | Qty | Price/Month | → Amt/Month | → Contract Total
+    // Rental: Months | Qty | Price/Month | -> Amt/Month | -> Contract Total
     // Grid: 5 columns
     fieldsRow.style.gridTemplateColumns = '90px 80px 1fr 1fr 1fr';
 
@@ -615,10 +615,10 @@ function addItem(){
     fieldsRow.appendChild(makeField('Duration (Months)', monthsInp));
     fieldsRow.appendChild(makeField('Quantity (Units)', qtyInp));
     fieldsRow.appendChild(makeField('Price Per Item / Month', priceInp));
-    fieldsRow.appendChild(makeField('Amount / Month  ⟵ auto', makeComputed('amd-'+id)));
-    fieldsRow.appendChild(makeField('Total Contract Amount  ⟵ auto', makeComputed('ctd-'+id, true), true));
+    fieldsRow.appendChild(makeField('Amount / Month  <- auto', makeComputed('amd-'+id)));
+    fieldsRow.appendChild(makeField('Total Contract Amount  <- auto', makeComputed('ctd-'+id, true), true));
   } else {
-    // Purchase: UOM | Qty | Unit Price | Disc% | → Line Total
+    // Purchase: UOM | Qty | Unit Price | Disc% | -> Line Total
     // Grid: 5 columns
     fieldsRow.style.gridTemplateColumns = '90px 80px 1fr 100px 1fr';
 
@@ -634,10 +634,10 @@ function addItem(){
     fieldsRow.appendChild(makeField('Quantity', qtyInp));
     fieldsRow.appendChild(makeField('Unit Price', priceInp));
     fieldsRow.appendChild(makeField('Discount %', discInp));
-    fieldsRow.appendChild(makeField('Line Total  ⟵ auto', makeComputed('ltd-'+id, true), true));
+    fieldsRow.appendChild(makeField('Line Total  <- auto', makeComputed('ltd-'+id, true), true));
   }
 
-  /* ── ROW 3: Tax + Description toggle ── */
+  /* -- ROW 3: Tax + Description toggle -- */
   const bottomRow = document.createElement('div');
   bottomRow.className = 'item-bottom-row';
 
@@ -657,13 +657,13 @@ function addItem(){
   const togBtn = document.createElement('button');
   togBtn.id = 'dtog-' + id;
   togBtn.className = 'desc-tog np';
-  togBtn.textContent = '▸ Add description / specs';
+  togBtn.textContent = '> Add description / specs';
   togBtn.onclick = () => toggleDesc(id);
 
   bottomRow.appendChild(taxWrap);
   bottomRow.appendChild(togBtn);
 
-  /* ── DESCRIPTION AREA ── */
+  /* -- DESCRIPTION AREA -- */
   const descArea = document.createElement('div');
   descArea.className = 'item-desc-area';
   descArea.id = 'darea-' + id;
@@ -676,7 +676,7 @@ function addItem(){
   ta.oninput = () => { ta.style.height='auto'; ta.style.height=Math.max(80,ta.scrollHeight)+'px'; };
   descArea.appendChild(ta);
 
-  /* ── ASSEMBLE ── */
+  /* -- ASSEMBLE -- */
   card.appendChild(nameRow);
   card.appendChild(fieldsRow);
   card.appendChild(bottomRow);
@@ -695,11 +695,11 @@ function toggleDesc(id){
   if(!open){
     const ta = area.querySelector('textarea');
     ta.style.height='auto'; ta.style.height=Math.max(80,ta.scrollHeight)+'px'; ta.focus();
-    tog.textContent = '▾ Hide description';
+    tog.textContent = 'v Hide description';
     tog.classList.add('filled');
   } else {
     const has = !!area.querySelector('textarea').value.trim();
-    tog.textContent = has ? '▾ Description added ✓' : '▸ Add description / specs';
+    tog.textContent = has ? 'v Description added OK' : '> Add description / specs';
     tog.classList.toggle('filled', has);
   }
 }
@@ -708,9 +708,9 @@ function renumber(){
   document.querySelectorAll('.item-badge').forEach((b,i) => b.textContent = i+1);
 }
 
-/* ═══════════════════════════════
+/* ===============================
    RECALC
-═══════════════════════════════ */
+=============================== */
 function getItems(){
   const rental = isRental();
   const c = cur();
@@ -724,8 +724,8 @@ function getItems(){
 
     if(rental){
       const months      = parseFloat(card.querySelector('[data-role=months]')?.value) || 36;
-      const amtMonth    = qty * price;              // Qty × Price/Month
-      const contractAmt = amtMonth * months;        // Amt/Month × Months
+      const amtMonth    = qty * price;              // Qty x Price/Month
+      const contractAmt = amtMonth * months;        // Amt/Month x Months
       const taxAmt      = hasTax ? contractAmt * c.tax : 0;
       // Update computed displays
       const amd = $('amd-'+cid); if(amd) amd.textContent = fmtN(amtMonth);
@@ -752,9 +752,9 @@ function recalc(){
   $('t-grand').textContent = fmt(excl+tax);
 }
 
-/* ═══════════════════════════════
+/* ===============================
    CLEAR
-═══════════════════════════════ */
+=============================== */
 function clearAll(){
   if(!confirm('Clear everything and start fresh?')) return;
   $('item-list').innerHTML = '';
@@ -765,9 +765,9 @@ function clearAll(){
   refreshTerms(); setTnC(); addItem();
 }
 
-/* ═══════════════════════════════
+/* ===============================
    PDF BUILDER
-═══════════════════════════════ */
+=============================== */
 function buildPDF(){
   const rental = isRental();
   const c      = cur();
@@ -816,7 +816,7 @@ function buildPDF(){
     const spec = it.desc.trim()
       ? '<br><span style="font-size:7pt;color:#444;line-height:1.6;">' + it.desc.replace(/\n/g,'<br>') + '</span>'
       : '';
-    const cell = `<strong>${it.name||'—'}</strong>${spec}`;
+    const cell = `<strong>${it.name||'-'}</strong>${spec}`;
     const tv   = it.hasTax ? 'SV' : '';
     const ds   = it.disc > 0 ? it.disc + '%' : '';
     return rental
@@ -928,10 +928,10 @@ function doExport(){
   window.print();
 }
 
-/* ═══════════════════════════════
-   HUBSPOT — all calls via Netlify
+/* ===============================
+   HUBSPOT - all calls via Netlify
    proxy to bypass CORS restriction
-═══════════════════════════════ */
+=============================== */
 function toggleHsPanel(){ $('hs-panel').classList.toggle('open'); }
 document.addEventListener('click', e => {
   const p=$('hs-panel'), b=$('hs-status-btn');
@@ -953,18 +953,18 @@ async function hsApi(method, path, payload){
 }
 
 async function testConn(){
-  showFb('loading','Testing connection to HubSpot…');
+  showFb('loading','Testing connection to HubSpot...');
   try{
     const { ok, data } = await hsApi('GET', '/crm/v3/objects/contacts?limit=1');
     if(ok){
-      showFb('ok','✓ Connected to HubSpot successfully!');
+      showFb('ok','OK Connected to HubSpot successfully!');
       setHsStat('ok','HubSpot Connected');
       $('hs-push-btn').disabled = false;
     } else {
-      showFb('err','✗ ' + (data.error || data.message || 'Connection failed. Check HUBSPOT_TOKEN in Netlify settings.'));
+      showFb('err','X ' + (data.error || data.message || 'Connection failed. Check HUBSPOT_TOKEN in Netlify settings.'));
       setHsStat('err','HubSpot Error');
     }
-  } catch(e){ showFb('err','✗ ' + e.message); }
+  } catch(e){ showFb('err','X ' + e.message); }
 }
 
 // Auto-check connection when page loads (only on Netlify, not local)
@@ -974,16 +974,16 @@ window.addEventListener('load', () => {
     try {
       const { ok } = await hsApi('GET', '/crm/v3/objects/contacts?limit=1');
       if(ok){ setHsStat('ok','HubSpot Connected'); $('hs-push-btn').disabled=false; }
-      else { setHsStat('err','HubSpot — check setup'); }
-    } catch(e) { /* function not available yet — skip */ }
+      else { setHsStat('err','HubSpot - check setup'); }
+    } catch(e) { /* function not available yet - skip */ }
   }, 800);
 });
 
 async function pushHS(){
   const co=gv('cco'), nm=gv('cname'), em=gv('cemail');
   if(!co&&!nm){ alert('Enter a customer name or company first.'); return; }
-  const btn=$('hs-push-btn'); btn.disabled=true; btn.textContent='Pushing…';
-  showRes('loading','⏳ Connecting to HubSpot…');
+  const btn=$('hs-push-btn'); btn.disabled=true; btn.textContent='Pushing...';
+  showRes('loading',' Connecting to HubSpot...');
   try{
     // 1. Find or create contact
     let cid = null;
@@ -1002,11 +1002,11 @@ async function pushHS(){
       cid = data.id;
     }
     // 2. Create deal
-    showRes('loading','⏳ Creating deal in HubSpot…');
+    showRes('loading',' Creating deal in HubSpot...');
     const items=getItems(); let ex=0,tx=0;
     items.forEach(it=>{ ex+=it.lineTotal; tx+=it.taxAmt; });
     const gr=ex+tx; const c=cur();
-    const dn = gv('qno') + ' — ' + (co||nm);
+    const dn = gv('qno') + ' - ' + (co||nm);
     const { ok:dok, data:dj } = await hsApi('POST', '/crm/v3/objects/deals', {
       properties:{
         dealname:dn, amount:gr.toFixed(2),
@@ -1021,9 +1021,9 @@ async function pushHS(){
       [{ associationCategory:'HUBSPOT_DEFINED', associationTypeId:5 }]
     );
     // 4. Build note with full quote details
-    showRes('loading','⏳ Attaching quote note…');
+    showRes('loading',' Attaching quote note...');
     const nl = [
-      `RENTALWORKS QUOTE — ${gv('qno')} [${c.code}]`,
+      `RENTALWORKS QUOTE - ${gv('qno')} [${c.code}]`,
       `Date: ${gv('qdate')}  |  Valid Until: ${gv('qvalid')}`,
       `Customer: ${co} ${nm}`,
       `Quote Type: ${isRental()?'RENTAL / LEASING':'PURCHASE / HW SUPPLY'}`,
@@ -1039,8 +1039,7 @@ async function pushHS(){
     nl.push(``, `Total Excl Tax : ${c.sym}${fmtN(ex)}`, `Tax           : ${c.sym}${fmtN(tx)}`, `GRAND TOTAL   : ${c.sym}${fmtN(gr)}`);
     if(gv('remarks')) nl.push(``, `Remarks: ${gv('remarks')}`);
     const { ok:nok, data:nj } = await hsApi('POST', '/crm/v3/objects/notes', {
-      properties:{ hs_note_body:nl.join('
-'), hs_timestamp:Date.now().toString() }
+      properties:{ hs_note_body:nl.join('\n'), hs_timestamp:Date.now().toString() }
     });
     if(!nok) throw new Error(nj.message || 'Failed to create note');
     const nid = nj.id;
@@ -1050,9 +1049,9 @@ async function pushHS(){
     await hsApi('PUT', `/crm/v4/objects/notes/${nid}/associations/contacts/${cid}`,
       [{ associationCategory:'HUBSPOT_DEFINED', associationTypeId:202 }]
     );
-    showRes('ok', `✓ Deal "<strong>${dn}</strong>" created in HubSpot with full quote note attached. <a href="https://app.hubspot.com/contacts/deals/${did}" target="_blank">View Deal in HubSpot →</a>`);
+    showRes('ok', `OK Deal "<strong>${dn}</strong>" created in HubSpot with full quote note attached. <a href="https://app.hubspot.com/contacts/deals/${did}" target="_blank">View Deal in HubSpot -></a>`);
   } catch(e) {
-    showRes('err','✗ ' + e.message);
+    showRes('err','X ' + e.message);
   } finally {
     btn.disabled=false; btn.textContent='Push to HubSpot';
   }
