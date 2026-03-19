@@ -437,7 +437,7 @@ select{
           <div class="sdb-name" id="sdb-name"></div>
           <div style="font-size:11px;color:var(--mid);margin-top:2px;" id="sdb-meta"></div>
         </div>
-        <button class="sdb-clear" onclick="clearSelectedDeal()" title="Remove selection">x</button>
+        <button class="sdb-clear" onclick="clearSelectedDeal()" title="Remove selection" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:13px;font-weight:600;padding:4px 8px;border-radius:5px;border:1px solid #F5BABB;">Clear</button>
       </div>
       <div style="font-size:11px;color:var(--mid);margin-top:10px;">If no deal is selected, the quote will still be created in HubSpot but not linked to a deal.</div>
     </div>
@@ -1002,7 +1002,7 @@ async function searchDeals(){
       const stage  = deal.properties.dealstage || '';
       const div = document.createElement('div');
       div.className = 'deal-result-item' + (selectedDeal && selectedDeal.id === deal.id ? ' selected' : '');
-      div.innerHTML = '<div><div class="deal-name">' + name + '</div><div class="deal-meta">ID: ' + deal.id + (stage ? '  |  Stage: ' + stage : '') + '</div></div>' + (amt ? '<div class="deal-amount">' + amt + '</div>' : '');
+      div.innerHTML = '<div><div class="deal-name">' + name + '</div><div class="deal-meta">Deal ID: ' + deal.id + (amt ? '  &nbsp;|&nbsp;  ' + amt : '') + '</div></div><div style="font-size:11px;color:var(--mid);padding:4px 8px;border-radius:5px;background:var(--surface);white-space:nowrap;margin-left:8px;">Select</div>';
       div.onclick = () => selectDeal(deal, name, amt, stage);
       resultsEl.appendChild(div);
     });
@@ -1022,7 +1022,7 @@ function selectDeal(deal, name, amt, stage){
   event.currentTarget.classList.add('selected');
   // Show badge
   document.getElementById('sdb-name').textContent = name;
-  document.getElementById('sdb-meta').textContent = 'Deal ID: ' + deal.id + (amt ? '  |  ' + amt : '') + (stage ? '  |  ' + stage : '');
+  document.getElementById('sdb-meta').textContent = 'Deal ID: ' + deal.id + (amt ? '   |   ' + amt : '');
   document.getElementById('selected-deal-badge').classList.add('show');
 }
 
