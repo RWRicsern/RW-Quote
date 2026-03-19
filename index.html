@@ -1038,17 +1038,7 @@ async function pushHS(){
         hs_expiration_date: String(expiryTs),
         hs_status: 'DRAFT',
         hs_currency: c.code,
-        hs_language: 'en',
-        hs_comment: [
-          'Quote No: ' + gv('qno'),
-          'Type: ' + (isRental() ? 'Rental / Leasing' : 'Purchase / HW Supply'),
-          'Payment Term: ' + gv('payment-term'),
-          'Prepared By: ' + (gv('pic') || 'Rentalworks'),
-          'Total Excl Tax: ' + c.sym + fmtN(ex),
-          'Tax (' + c.taxLbl + '): ' + c.sym + fmtN(tx),
-          'Grand Total: ' + c.sym + fmtN(gr),
-          gv('remarks') ? 'Remarks: ' + gv('remarks') : ''
-        ].filter(Boolean).join('\n')
+        hs_language: 'en'
       }
     });
     if(!qok) throw new Error(qd.message || 'Failed to create quote: ' + JSON.stringify(qd));
