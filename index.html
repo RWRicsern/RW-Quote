@@ -424,7 +424,7 @@ select{
   <div class="card">
     <div class="ch">
       <span class="ct">5 -- Link to HubSpot Deal</span>
-      <span style="font-size:11px;color:var(--mid)">Optional -- attach this quote to an existing deal</span>
+      <span style="font-size:11px;color:var(--mid)">Required -- select the deal this quote is for</span>
     </div>
     <div class="cb">
       <div class="deal-search-wrap">
@@ -439,7 +439,7 @@ select{
         </div>
         <button class="sdb-clear" onclick="clearSelectedDeal()" title="Remove selection" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:13px;font-weight:600;padding:4px 8px;border-radius:5px;border:1px solid #F5BABB;">Clear</button>
       </div>
-      <div style="font-size:11px;color:var(--mid);margin-top:10px;">If no deal is selected, the quote will still be created in HubSpot but not linked to a deal.</div>
+      <div style="font-size:11px;color:var(--mid);margin-top:10px;">Select a deal first — the quote will be attached as a note on that deal, viewable in the deal's activity timeline.</div>
     </div>
   </div>
 
@@ -1083,94 +1083,134 @@ window.addEventListener('load', () => {
 });
 
 async function pushHS(){
+  if(!selectedDeal){ alert('Please search and select a HubSpot deal first (Section 5).'); return; }
   const co=gv('cco'), nm=gv('cname'), em=gv('cemail');
-  if(!co&&!nm){ alert('Enter a customer name or company first.'); return; }
-  if(!gv('qno')){ alert('Please enter a Quote Number before pushing.'); return; }
   const btn=$('hs-push-btn'); btn.disabled=true; btn.textContent='Pushing...';
   showRes('loading','Connecting to HubSpot...');
   try{
-    const items=getItems(); let ex=0,tx=0;
+    const items = getItems();
+    let ex=0, tx=0;
     items.forEach(it=>{ ex+=it.lineTotal; tx+=it.taxAmt; });
-    const gr=ex+tx; const c=cur();
+    const gr=ex+tx, c=cur();
+    const dealId   = selectedDeal.id;
+    const dealName = selectedDeal.properties.dealname || dealId;
 
-    // 1. Find or create contact
-    showRes('loading','Finding customer in HubSpot...');
-    let cid = null;
-    if(em){
-      const { ok, data } = await hsApi('POST', '/crm/v3/objects/contacts/search', {
-        filterGroups:[{filters:[{propertyName:'email',operator:'EQ',value:em}]}], limit:1
-      });
-      if(ok && data.results?.length) cid = data.results[0].id;
-    }
-    if(!cid){
-      const p = (nm||co).split(' ');
-      const { ok, data } = await hsApi('POST', '/crm/v3/objects/contacts', {
-        properties:{ firstname:p[0]||nm, lastname:p.slice(1).join(' ')||'', email:em||'', phone:gv('cphone'), company:co }
-      });
-      if(!ok) throw new Error(data.message || 'Failed to create contact');
-      cid = data.id;
-    }
+    // Build a richly formatted note body that looks like the actual quote
+    const divider  = '─────────────────────────────────────';
+    const isR      = isRental();
+    const lines    = [
+      'RENTALWORKS SDN BHD (767231-D)',
+      'www.rentalworks.com.my',
+      divider,
+      'QUOTATION',
+      divider,
+      'Quote No     : ' + gv('qno'),
+      'Date         : ' + gv('qdate'),
+      'Valid Until  : ' + gv('qvalid'),
+      'Payment Term : ' + gv('payment-term'),
+      'Currency     : ' + c.code,
+      'Quote Type   : ' + (isR ? 'Rental / Leasing' : 'Purchase / HW Supply'),
+      'Prepared By  : ' + (gv('pic') || 'Rentalworks'),
+      '',
+      'CUSTOMER',
+      divider,
+      'Company : ' + (co || '-'),
+      'Contact : ' + (nm || '-'),
+      'Email   : ' + (em || '-'),
+      'Phone   : ' + (gv('cphone') || '-'),
+      '',
+      'LINE ITEMS',
+      divider
+    ];
 
-    // 2. Create each line item
-    showRes('loading','Creating line items...');
-    const lineItemIds = [];
-    for(const it of items){
-      const props = {
-        name: isRental() ? it.name + ' (' + it.months + ' months rental)' : it.name,
-        quantity: String(it.qty),
-        price: String(it.price),
-        amount: String(it.lineTotal.toFixed(2)),
-        hs_line_item_currency_code: c.code,
-        description: it.desc || ''
-      };
-      if(it.disc > 0) props.discount = String(it.disc);
-      const { ok, data } = await hsApi('POST', '/crm/v3/objects/line_items', { properties: props });
-      if(!ok) throw new Error(data.message || 'Failed to create line item: ' + it.name);
-      lineItemIds.push(data.id);
-    }
+    items.forEach(it => {
+      lines.push((it.no) + '. ' + it.name);
+      if(isR){
+        lines.push('   Duration  : ' + it.months + ' months');
+        lines.push('   Qty       : ' + it.qty + ' unit(s)');
+        lines.push('   Price/mo  : ' + c.sym + ' ' + fmtN(it.price) + ' per item');
+        lines.push('   Amt/month : ' + c.sym + ' ' + fmtN(it.amtMonth));
+        lines.push('   Contract  : ' + c.sym + ' ' + fmtN(it.contractAmt) + (it.hasTax ? ' (+ ' + c.taxLbl + ')' : ''));
+      } else {
+        lines.push('   UOM       : ' + it.uom);
+        lines.push('   Qty       : ' + it.qty);
+        lines.push('   Unit Price: ' + c.sym + ' ' + fmtN(it.price));
+        if(it.disc > 0) lines.push('   Discount  : ' + it.disc + '%');
+        lines.push('   Line Total: ' + c.sym + ' ' + fmtN(it.lineTotal) + (it.hasTax ? ' (+ ' + c.taxLbl + ')' : ''));
+      }
+      if(it.desc && it.desc.trim()){
+        it.desc.trim().split('\n').forEach(dl => lines.push('   ' + dl));
+      }
+      lines.push('');
+    });
 
-    // 3. Create the Quote record
-    showRes('loading','Creating quote in HubSpot...');
-    const expiryTs = gv('qvalid')
-      ? new Date(gv('qvalid')).getTime()
-      : Date.now() + 30*24*60*60*1000;
-    const quoteTitle = gv('qno') + ' - ' + (co||nm);
-    const { ok:qok, data:qd } = await hsApi('POST', '/crm/v3/objects/quotes', {
+    lines.push(divider);
+    lines.push('Total Excl. ' + c.taxLbl + ' : ' + c.sym + ' ' + fmtN(ex));
+    lines.push(c.taxLbl + '             : ' + c.sym + ' ' + fmtN(tx));
+    lines.push('GRAND TOTAL          : ' + c.sym + ' ' + fmtN(gr));
+
+    if(gv('remarks')){
+      lines.push('');
+      lines.push('REMARKS');
+      lines.push(divider);
+      lines.push(gv('remarks'));
+    }
+    if(gv('tandc')){
+      lines.push('');
+      lines.push('TERMS & CONDITIONS');
+      lines.push(divider);
+      gv('tandc').split('\n').forEach(l => lines.push(l));
+    }
+    lines.push('');
+    lines.push(divider);
+    lines.push('Generated by Rentalworks Quote Generator');
+
+    // Create the note and attach to deal
+    showRes('loading','Attaching quote to deal "' + dealName + '"...');
+    const { ok:nok, data:nj } = await hsApi('POST', '/crm/v3/objects/notes', {
       properties:{
-        hs_title: quoteTitle,
-        hs_expiration_date: String(expiryTs),
-        hs_status: 'DRAFT',
-        hs_currency: c.code,
-        hs_language: 'en'
+        hs_note_body: lines.join('\n'),
+        hs_timestamp: Date.now().toString()
       }
     });
-    if(!qok) throw new Error(qd.message || 'Failed to create quote: ' + JSON.stringify(qd));
-    const qid = qd.id;
+    if(!nok) throw new Error(nj.message || 'Failed to create note');
+    const nid = nj.id;
 
-    // 4. Associate line items to quote
-    showRes('loading','Linking ' + lineItemIds.length + ' line items...');
-    for(const liId of lineItemIds){
-      await hsApi('PUT', '/crm/v4/objects/quotes/' + qid + '/associations/line_items/' + liId,
-        [{ associationCategory:'HUBSPOT_DEFINED', associationTypeId:67 }]
-      );
-    }
-
-    // 5. Associate contact to quote
-    await hsApi('PUT', '/crm/v4/objects/quotes/' + qid + '/associations/contacts/' + cid,
-      [{ associationCategory:'HUBSPOT_DEFINED', associationTypeId:702 }]
+    // Attach note to deal
+    await hsApi('PUT', '/crm/v4/objects/notes/' + nid + '/associations/deals/' + dealId,
+      [{ associationCategory:'HUBSPOT_DEFINED', associationTypeId:214 }]
     );
 
-    // 6. Associate quote to selected deal (if one was chosen)
-    if(selectedDeal){
-      showRes('loading','Linking quote to deal...');
-      await hsApi('PUT', '/crm/v4/objects/quotes/' + qid + '/associations/deals/' + selectedDeal.id,
-        [{ associationCategory:'HUBSPOT_DEFINED', associationTypeId:64 }]
-      );
+    // Also attach contact to deal if email provided
+    if(em){
+      let cid = null;
+      const { ok:sok, data:sd } = await hsApi('POST', '/crm/v3/objects/contacts/search', {
+        filterGroups:[{filters:[{propertyName:'email',operator:'EQ',value:em}]}], limit:1
+      });
+      if(sok && sd.results?.length) cid = sd.results[0].id;
+      if(!cid){
+        const p = (nm||co).split(' ');
+        const { ok:cok, data:cd } = await hsApi('POST', '/crm/v3/objects/contacts', {
+          properties:{ firstname:p[0]||nm, lastname:p.slice(1).join(' ')||'', email:em, phone:gv('cphone'), company:co }
+        });
+        if(cok) cid = cd.id;
+      }
+      if(cid){
+        await hsApi('PUT', '/crm/v4/objects/notes/' + nid + '/associations/contacts/' + cid,
+          [{ associationCategory:'HUBSPOT_DEFINED', associationTypeId:202 }]
+        );
+        await hsApi('PUT', '/crm/v4/objects/deals/' + dealId + '/associations/contacts/' + cid,
+          [{ associationCategory:'HUBSPOT_DEFINED', associationTypeId:3 }]
+        );
+      }
     }
 
-    const dealInfo = selectedDeal ? ' and linked to deal <strong>' + (selectedDeal.properties.dealname||selectedDeal.id) + '</strong>' : '';
-    showRes('ok', 'Quote <strong>' + quoteTitle + '</strong> created in HubSpot with ' + lineItemIds.length + ' line item(s)' + dealInfo + '. <a href="https://app.hubspot.com/quotes/' + qid + '" target="_blank">View Quote -></a>');
-  } catch(e) {
+    showRes('ok',
+      'Quote <strong>' + gv('qno') + '</strong> attached to deal <strong>' + dealName + '</strong> in HubSpot. ' +
+      'Open the deal and check the Notes section in the activity timeline to view it. ' +
+      '<a href="https://app.hubspot.com/contacts/' + (selectedDeal.properties.portalId||'') + '/deals/' + dealId + '" target="_blank">View Deal -></a>'
+    );
+  } catch(e){
     showRes('err','X ' + e.message);
   } finally {
     btn.disabled=false; btn.textContent='Push to HubSpot';
