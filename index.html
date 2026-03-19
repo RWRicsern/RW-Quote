@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rentalworks Sdn Bhd — Quote Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#C0202A; --red-dk:#9E1820; --red-lt:#FDF2F2;
+  --bg:#F0F0EC; --white:#fff; --border:#E2E0DA;
+  --text:#1A1A1A; --mid:#72726A; --hint:#BBBBB0;
+  --surface:#FAFAF7;
+  --green:#1A7A4A; --green-bg:#F0FBF6; --green-br:#BEE3D0;
+  --amber-bg:#FFFBEC; --amber-br:#F0D878; --amber:#7A5A0A;
+  --blue-bg:#EEF4FF; --blue-br:#C0D0F0; --blue:#2A4A9A;
+  --hs:#FF7A59;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);font-size:14px;-webkit-font-smoothing:antialiased;}
+
+/* ── HEADER ─────────────────────────── */
+header{background:var(--red);height:54px;padding:0 32px;display:flex;align-items:center;justify-content:space-between;}
+.brand{display:flex;align-items:center;gap:10px;}
+.brand-name{color:#fff;font-size:15px;font-weight:600;}
+.vr{width:1px;height:15px;background:rgba(255,255,255,.3);}
+.brand-sub{color:rgba(255,255,255,.55);font-size:12px;}
+.hdr-right{display:flex;align-items:center;gap:8px;}
+.hs-btn{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:500;color:rgba(255,255,255,.65);cursor:pointer;padding:5px 12px;border-radius:20px;background:rgba(255,255,255,.12);border:none;font-family:'Outfit',sans-serif;transition:background .13s;}
+.hs-btn:hover{background:rgba(255,255,255,.2);}
+.dot{width:7px;height:7px;border-radius:50%;background:#999;flex-shrink:0;}
+.dot.ok{background:#4CAF88;}.dot.err{background:#F66;}
+
+/* ── LAYOUT ─────────────────────────── */
+.wrap{max-width:860px;margin:0 auto;padding:28px 20px 80px;}
+
+/* ── CARDS ──────────────────────────── */
+.card{background:var(--white);border-radius:12px;border:1px solid var(--border);margin-bottom:14px;}
+.ch{padding:14px 22px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.ct{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;color:var(--mid);}
+.cb{padding:22px;}
+
+/* ── FORM FIELDS ────────────────────── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:0 16px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 16px;}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0 16px;}
+.fld{margin-bottom:14px;}
+.fld:last-child{margin-bottom:0;}
+.lb{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--mid);margin-bottom:5px;}
+
+input[type=text],input[type=email],input[type=number],input[type=date],input[type=password],select,textarea{
+  font-family:'Outfit',sans-serif;font-size:13px;color:var(--text);
+  background:var(--white);border:1.5px solid var(--border);border-radius:7px;
+  padding:8px 11px;width:100%;outline:none;
+  transition:border-color .13s,box-shadow .13s;-webkit-appearance:none;appearance:none;
+}
+input:focus,select:focus,textarea:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(192,32,42,.08);}
+input::placeholder,textarea::placeholder{color:var(--hint);}
+textarea{resize:vertical;}
+select{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2372726A' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 10px center;padding-right:28px;cursor:pointer;
+}
+
+/* ── QUOTE TYPE ─────────────────────── */
+.qtype-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.qtype-opt input[type=radio]{display:none;}
+.qtype-card{display:flex;align-items:flex-start;gap:12px;padding:16px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;background:var(--surface);transition:all .15s;}
+.qtype-card:hover{border-color:#C4C4BC;}
+.qtype-opt input:checked + .qtype-card{border-color:var(--red);background:var(--red-lt);box-shadow:0 0 0 3px rgba(192,32,42,.07);}
+.qtype-radio{width:17px;height:17px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;margin-top:2px;background:#fff;display:flex;align-items:center;justify-content:center;transition:all .14s;}
+.qtype-opt input:checked + .qtype-card .qtype-radio{border-color:var(--red);background:var(--red);}
+.qtype-radio::after{content:'';width:5px;height:5px;border-radius:50%;background:#fff;display:none;}
+.qtype-opt input:checked + .qtype-card .qtype-radio::after{display:block;}
+.qtype-name{font-size:14px;font-weight:600;color:var(--text);display:block;margin-bottom:2px;}
+.qtype-sub{font-size:11.5px;color:var(--mid);display:block;}
+
+/* ── COUNTRY CARDS ──────────────────── */
+.country-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.cc{display:flex;align-items:center;gap:12px;padding:14px 16px;border:2px solid var(--border);border-radius:10px;cursor:pointer;background:var(--surface);transition:all .15s;}
+.cc:hover{border-color:#C4C4BC;}
+.cc.active-my{border-color:var(--red);background:var(--red-lt);}
+.cc.active-sg{border-color:#4A6280;background:#EEF2F8;}
+.cc.active-id{border-color:#C07820;background:#FDF6EC;}
+.cc-badge{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;}
+.cc-name{font-size:14px;font-weight:600;color:var(--text);}
+.cc-info{font-size:11px;color:var(--mid);margin-top:2px;}
+
+/* ── LINE ITEMS ─────────────────────── */
+.item-list{display:flex;flex-direction:column;gap:12px;margin-bottom:14px;}
+
+.item-card{
+  border:1.5px solid var(--border);
+  border-radius:10px;
+  overflow:hidden;
+  background:#fff;
+  transition:border-color .15s, box-shadow .15s;
+}
+.item-card:focus-within{border-color:#C4C4BC;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+
+/* Row 1: number badge + name + delete */
+.item-name-row{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 14px;
+  border-bottom:1px solid var(--border);
+  background:#fff;
+}
+.item-badge{
+  width:26px;height:26px;border-radius:50%;
+  background:var(--red);color:#fff;
+  font-size:11px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.item-name-input{
+  flex:1;min-width:0;font-size:14px;font-weight:500;
+  border:1.5px solid var(--border);border-radius:7px;
+  padding:8px 11px;font-family:'Outfit',sans-serif;
+  color:var(--text);background:#fff;outline:none;
+  transition:border-color .13s,box-shadow .13s;
+}
+.item-name-input:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(192,32,42,.08);}
+.item-name-input::placeholder{color:var(--hint);font-weight:400;}
+.item-del{
+  width:30px;height:30px;flex-shrink:0;
+  border:1px solid #F0D0D2;background:#FEF5F5;
+  border-radius:7px;color:var(--red);
+  font-size:18px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .1s;padding:0;
+}
+.item-del:hover{background:#FDECEA;}
+
+/* Row 2: numeric fields in a labeled grid */
+.item-fields-row{
+  display:grid;
+  gap:0;
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+}
+/* each cell */
+.item-field{
+  padding:10px 12px 12px;
+  border-right:1px solid var(--border);
+}
+.item-field:last-child{border-right:none;}
+.item-field-label{
+  font-size:9.5px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.5px;
+  color:var(--mid);margin-bottom:6px;display:block;
+}
+/* computed/read-only display */
+.item-computed{
+  background:var(--bg);border:1.5px solid var(--border);
+  border-radius:7px;padding:8px 11px;
+  font-size:13px;font-weight:600;color:var(--text);
+  text-align:right;white-space:nowrap;
+}
+.item-computed.highlight{
+  background:#F0FBF6;border-color:#BEE3D0;color:var(--green);
+}
+
+/* Row 3: tax + description toggle in one strip */
+.item-bottom-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 14px;
+  background:var(--surface);
+}
+.item-tax-wrap{display:flex;align-items:center;gap:8px;}
+.item-tax-label{font-size:11px;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:.4px;}
+.item-tax-select{
+  width:auto;padding:5px 26px 5px 9px;font-size:12px;
+  border:1.5px solid var(--border);border-radius:6px;
+  background-color:#fff;cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2372726A' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 8px center;
+}
+.item-tax-select:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(192,32,42,.08);outline:none;}
+
+/* description toggle */
+.desc-tog{
+  background:none;border:none;cursor:pointer;
+  font-family:'Outfit',sans-serif;font-size:11.5px;
+  color:var(--mid);padding:0;display:flex;align-items:center;gap:5px;
+  transition:color .12s;
+}
+.desc-tog:hover{color:var(--red);}
+.desc-tog.filled{color:var(--text);font-weight:500;}
+
+/* description textarea area */
+.item-desc-area{
+  padding:0 14px;
+  overflow:hidden;
+  max-height:0;
+  transition:max-height .2s ease, padding .2s ease;
+  background:#fff;
+  border-top:0px solid var(--border);
+}
+.item-desc-area.open{
+  max-height:300px;
+  padding:12px 14px;
+  border-top:1px solid var(--border);
+}
+.item-desc-area textarea{
+  min-height:80px;font-size:12.5px;line-height:1.6;
+  background:#FAFAF7;resize:vertical;
+}
+.item-desc-area textarea:focus{background:#fff;}
+
+/* ── TOTALS ─────────────────────────── */
+.totals-wrap{display:flex;justify-content:flex-end;margin-top:16px;}
+.totals-box{min-width:300px;border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.trow{display:flex;justify-content:space-between;align-items:center;padding:9px 16px;font-size:13px;border-bottom:1px solid var(--border);}
+.trow:last-child{border-bottom:none;}
+.trow .tl{color:var(--mid);}
+.trow .tv{font-weight:600;}
+.trow.grand{background:var(--text);padding:12px 16px;}
+.trow.grand .tl{color:rgba(255,255,255,.5);font-size:12px;}
+.trow.grand .tv{color:#fff;font-size:18px;font-weight:700;}
+
+/* ── BUTTONS ────────────────────────── */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 20px;border-radius:8px;border:none;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .14s;}
+.btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--mid);}
+.btn-outline:hover{border-color:#C0BFB8;color:var(--text);}
+.btn-red{background:var(--red);color:#fff;padding:10px 24px;font-size:14px;}
+.btn-red:hover{background:var(--red-dk);}
+.btn-hs{background:var(--hs);color:#fff;padding:10px 22px;font-size:14px;}
+.btn-hs:hover{background:#e8673f;}
+.btn-hs:disabled{background:#D4B4A8;cursor:not-allowed;}
+.actions{display:flex;justify-content:flex-end;gap:10px;padding-top:4px;}
+
+/* add item button */
+.add-item-btn{
+  width:100%;padding:12px;
+  border:1.5px dashed var(--border);border-radius:10px;
+  background:transparent;cursor:pointer;
+  font-family:'Outfit',sans-serif;font-size:13px;color:var(--mid);
+  transition:all .14s;
+}
+.add-item-btn:hover{border-color:var(--red);color:var(--red);background:var(--red-lt);}
+
+/* ── ALERTS ─────────────────────────── */
+.alert{border-radius:10px;padding:12px 16px;margin-bottom:14px;font-size:13px;line-height:1.6;display:none;}
+.alert.ok{background:var(--green-bg);border:1px solid var(--green-br);color:var(--green);display:block;}
+.alert.err{background:var(--red-lt);border:1px solid #F5BABB;color:var(--red);display:block;}
+.alert.loading{background:var(--amber-bg);border:1px solid var(--amber-br);color:var(--amber);display:block;}
+.alert a{color:var(--hs);font-weight:600;text-decoration:none;}
+
+/* ── HUBSPOT PANEL ──────────────────── */
+.hs-panel{display:none;position:fixed;top:54px;right:0;width:370px;background:#fff;border-left:1px solid var(--border);border-bottom:1px solid var(--border);border-bottom-left-radius:12px;box-shadow:-3px 4px 22px rgba(0,0,0,.10);z-index:100;padding:20px;}
+.hs-panel.open{display:block;}
+.hs-ptitle{font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;}
+.hs-psub{font-size:12px;color:var(--mid);margin-bottom:16px;line-height:1.5;}
+.hs-trow{display:flex;gap:8px;align-items:flex-end;margin-bottom:10px;}
+.hs-trow .fld{flex:1;margin-bottom:0;}
+.test-btn{padding:8px 14px;border-radius:7px;border:1.5px solid var(--border);background:transparent;font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;color:var(--mid);cursor:pointer;white-space:nowrap;transition:all .13s;flex-shrink:0;}
+.test-btn:hover{border-color:var(--hs);color:var(--hs);}
+.hs-fb{font-size:12px;padding:9px 11px;border-radius:7px;margin-top:4px;line-height:1.5;display:none;}
+.hs-fb.ok{background:var(--green-bg);border:1px solid var(--green-br);color:var(--green);display:block;}
+.hs-fb.err{background:var(--red-lt);border:1px solid #F5BABB;color:var(--red);display:block;}
+.hs-fb.loading{background:var(--amber-bg);border:1px solid var(--amber-br);color:var(--amber);display:block;}
+.hs-help{font-size:11px;color:var(--mid);margin-top:10px;line-height:1.7;}
+.hs-help a{color:var(--hs);text-decoration:none;}
+.hs-close{position:absolute;top:13px;right:14px;background:none;border:none;font-size:18px;color:var(--mid);cursor:pointer;}
+
+/* ── PRINT ──────────────────────────── */
+@page{size:A4;margin:13mm 15mm;}
+@media screen{.po{display:none!important;}}
+@media print{
+  .np{display:none!important;}
+  body{background:#fff;}
+  .po{display:block!important;}
+  html{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="np">
+  <div class="brand">
+    <span class="brand-name">Rentalworks Sdn Bhd</span>
+    <div class="vr"></div>
+    <span class="brand-sub">Quote Generator</span>
+  </div>
+  <div class="hdr-right">
+    <button class="hs-btn" id="hs-status-btn" onclick="toggleHsPanel()">
+      <div class="dot" id="hs-dot"></div>
+      <span id="hs-lbl">Connect HubSpot</span>
+    </button>
+  </div>
+</header>
+
+<!-- HubSpot Panel -->
+<div class="hs-panel np" id="hs-panel">
+  <button class="hs-close" onclick="toggleHsPanel()">×</button>
+  <div class="hs-ptitle">🔗 HubSpot Integration</div>
+  <div class="hs-psub">Your HubSpot token is stored securely on the server. Click Test to verify the connection is working.</div>
+  <button class="test-btn" style="width:100%;padding:10px;border-radius:8px;margin-bottom:10px;" onclick="testConn()">Test Connection</button>
+  <div class="hs-fb" id="hs-fb"></div>
+  <div class="hs-help" style="margin-top:8px;">
+    <strong>For the admin setting this up:</strong><br>
+    In Netlify → Site Settings → Environment Variables, add:<br>
+    <code style="background:#F0F0EC;padding:2px 6px;border-radius:4px;font-size:11px;">HUBSPOT_TOKEN</code> = your Private App token<br><br>
+    Need a token? HubSpot → Settings → Integrations → Private Apps.<br>
+    Scopes needed: <code style="background:#F0F0EC;padding:2px 4px;border-radius:4px;font-size:10px;">crm.objects.contacts.write</code> <code style="background:#F0F0EC;padding:2px 4px;border-radius:4px;font-size:10px;">crm.objects.deals.write</code> <code style="background:#F0F0EC;padding:2px 4px;border-radius:4px;font-size:10px;">crm.objects.notes.write</code> <code style="background:#F0F0EC;padding:2px 4px;border-radius:4px;font-size:10px;">crm.objects.associations.write</code>
+  </div>
+</div>
+
+<!-- MAIN FORM -->
+<div class="wrap np">
+  <div class="alert" id="hs-result"></div>
+
+  <!-- 1. QUOTE TYPE -->
+  <div class="card">
+    <div class="ch">
+      <span class="ct">1 — Quote Type</span>
+      <span style="font-size:11px;color:var(--mid)">Select first — determines line item format</span>
+    </div>
+    <div class="cb">
+      <div class="qtype-row">
+        <label class="qtype-opt">
+          <input type="radio" name="qt" value="rental" checked onchange="onTypeChange()">
+          <div class="qtype-card">
+            <div class="qtype-radio"></div>
+            <div>
+              <span class="qtype-name">Rental / Leasing</span>
+              <span class="qtype-sub">Monthly instalments — Months × Qty × Price/Month</span>
+            </div>
+          </div>
+        </label>
+        <label class="qtype-opt">
+          <input type="radio" name="qt" value="purchase" onchange="onTypeChange()">
+          <div class="qtype-card">
+            <div class="qtype-radio"></div>
+            <div>
+              <span class="qtype-name">Purchase / HW Supply</span>
+              <span class="qtype-sub">One-time supply — Qty × Unit Price with optional discount</span>
+            </div>
+          </div>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. COUNTRY & CURRENCY -->
+  <div class="card">
+    <div class="ch">
+      <span class="ct">2 — Country &amp; Currency</span>
+      <span style="font-size:11px;color:var(--mid)">Affects all amounts and tax rate</span>
+    </div>
+    <div class="cb">
+      <div class="country-grid">
+        <div class="cc active-my" id="cc-MYR" onclick="setCurrency('MYR')">
+          <div class="cc-badge" style="background:var(--red);">RM</div>
+          <div><div class="cc-name">Malaysia</div><div class="cc-info">MYR · Service Tax 8%</div></div>
+        </div>
+        <div class="cc" id="cc-SGD" onclick="setCurrency('SGD')">
+          <div class="cc-badge" style="background:#4A6280;">SGD</div>
+          <div><div class="cc-name">Singapore</div><div class="cc-info">SGD · GST 9%</div></div>
+        </div>
+        <div class="cc" id="cc-IDR" onclick="setCurrency('IDR')">
+          <div class="cc-badge" style="background:#C07820;">IDR</div>
+          <div><div class="cc-name">Indonesia</div><div class="cc-info">IDR · PPN 11%</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. QUOTE DETAILS -->
+  <div class="card">
+    <div class="ch"><span class="ct">3 — Quote Details</span></div>
+    <div class="cb">
+      <div class="g4">
+        <div class="fld"><label class="lb">Quote No.</label><input type="text" id="qno" value="RW-Q-1086"></div>
+        <div class="fld"><label class="lb">Date</label><input type="date" id="qdate"></div>
+        <div class="fld"><label class="lb">Valid Until</label><input type="date" id="qvalid"></div>
+        <div class="fld"><label class="lb">Your Ref.</label><input type="text" id="your-ref" placeholder="Optional"></div>
+      </div>
+      <div class="g2">
+        <div class="fld"><label class="lb">Payment Term</label><select id="payment-term"></select></div>
+        <div class="fld"><label class="lb">Prepared By</label><input type="text" id="pic" placeholder="Your name"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. CUSTOMER -->
+  <div class="card">
+    <div class="ch"><span class="ct">4 — Customer</span></div>
+    <div class="cb">
+      <div class="g2">
+        <div class="fld"><label class="lb">Company Name</label><input type="text" id="cco" placeholder="Company Sdn Bhd"></div>
+        <div class="fld"><label class="lb">Contact Person</label><input type="text" id="cname" placeholder="Full name"></div>
+        <div class="fld"><label class="lb">Email</label><input type="email" id="cemail" placeholder="email@company.com"></div>
+        <div class="fld"><label class="lb">Phone</label><input type="text" id="cphone" placeholder="+60 12 345 6789"></div>
+      </div>
+      <div class="fld"><label class="lb">Address</label><textarea id="caddr" rows="2" placeholder="Street, City, Postcode, State"></textarea></div>
+      <div class="g2">
+        <div class="fld"><label class="lb">Tel</label><input type="text" id="ctel" placeholder="03-xxxx xxxx"></div>
+        <div class="fld"><label class="lb">Fax</label><input type="text" id="cfax" placeholder="03-xxxx xxxx"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. LINE ITEMS -->
+  <div class="card">
+    <div class="ch">
+      <span class="ct">5 — Line Items</span>
+      <span style="font-size:11px;color:var(--mid)">Shaded cells are calculated automatically</span>
+    </div>
+    <div class="cb" style="padding-bottom:16px;">
+      <div class="item-list" id="item-list"></div>
+      <button class="add-item-btn np" onclick="addItem()">+ Add line item</button>
+      <div class="totals-wrap">
+        <div class="totals-box">
+          <div class="trow"><span class="tl">Total Excl. Tax</span><span class="tv" id="t-excl">—</span></div>
+          <div class="trow"><span class="tl" id="t-tax-lbl">Service Tax 8%</span><span class="tv" id="t-tax">—</span></div>
+          <div class="trow grand"><span class="tl">Total Amount</span><span class="tv" id="t-grand">—</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. REMARKS -->
+  <div class="card">
+    <div class="ch"><span class="ct">6 — Remarks</span></div>
+    <div class="cb"><textarea id="remarks" rows="3" placeholder="e.g. Price quoted based on quantity for year 2025. Price for 2026 may change..."></textarea></div>
+  </div>
+
+  <!-- 7. T&C -->
+  <div class="card">
+    <div class="ch"><span class="ct">7 — Terms &amp; Conditions</span></div>
+    <div class="cb"><textarea id="tandc" rows="4"></textarea></div>
+  </div>
+
+  <div class="actions np">
+    <button class="btn btn-outline" onclick="clearAll()">Clear</button>
+    <button class="btn btn-outline" onclick="doExport()">Export PDF</button>
+    <button class="btn btn-hs" id="hs-push-btn" onclick="pushHS()" disabled>Push to HubSpot</button>
+  </div>
+</div>
+
+<!-- PRINT OUTPUT -->
+<div id="po" class="po"></div>
+
+<script>
+/* ═══════════════════════════════
+   CURRENCY
+═══════════════════════════════ */
+const CURR = {
+  MYR:{ sym:'RM',  code:'MYR', taxLbl:'Service Tax 8%', tax:0.08, dec:2 },
+  SGD:{ sym:'SGD', code:'SGD', taxLbl:'GST 9%',         tax:0.09, dec:2 },
+  IDR:{ sym:'IDR', code:'IDR', taxLbl:'PPN 11%',        tax:0.11, dec:0 },
+};
+let curCode = 'MYR';
+const cur = () => CURR[curCode];
+
+function fmtN(v){
+  const n = +v||0, c = cur();
+  return c.dec === 0
+    ? Math.round(n).toLocaleString('id-ID')
+    : n.toLocaleString('en-MY',{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+function fmt(v){ return cur().sym + ' ' + fmtN(v); }
+
+function setCurrency(code){
+  curCode = code;
+  const active = { MYR:'active-my', SGD:'active-sg', IDR:'active-id' };
+  ['MYR','SGD','IDR'].forEach(k => {
+    const el = document.getElementById('cc-'+k);
+    el.className = 'cc' + (k===code ? ' '+active[k] : '');
+  });
+  document.getElementById('t-tax-lbl').textContent = cur().taxLbl;
+  recalc();
+}
+
+/* ═══════════════════════════════
+   PAYMENT TERMS
+═══════════════════════════════ */
+const TERMS = {
+  rental:   ['Monthly Prepayment','Quarterly Prepayment','Half Yearly Prepayment','Yearly Prepayment'],
+  purchase: ['Advance Payment','Upon Delivery','30 Days','14 Days','Cash on Delivery (COD)'],
+};
+function refreshTerms(){
+  const sel = document.getElementById('payment-term');
+  const prev = sel.value;
+  sel.innerHTML = '';
+  TERMS[isRental()?'rental':'purchase'].forEach(t => {
+    const o = document.createElement('option');
+    o.value = o.textContent = t;
+    if(t===prev) o.selected = true;
+    sel.appendChild(o);
+  });
+}
+
+/* ═══════════════════════════════
+   HELPERS
+═══════════════════════════════ */
+let iid = 0;
+const $ = id => document.getElementById(id);
+const gv = id => $(id) ? $(id).value.trim() : '';
+const fmtDate = d => d.toISOString().slice(0,10);
+const isRental = () => document.querySelector('input[name=qt]:checked').value === 'rental';
+
+/* ═══════════════════════════════
+   INIT
+═══════════════════════════════ */
+window.onload = () => {
+  const now = new Date(), later = new Date(now);
+  later.setDate(later.getDate()+30);
+  $('qdate').value = fmtDate(now);
+  $('qvalid').value = fmtDate(later);
+  refreshTerms();
+  setTnC();
+  const tok = localStorage.getItem('rw_tok');
+  if(tok){ $('hs-token').value=tok; setHsStat('ok','HubSpot Connected'); $('hs-push-btn').disabled=false; }
+  addItem();
+};
+
+function setTnC(){
+  $('tandc').value = isRental()
+    ? '1. Stamp duty for rental agreement to be bore by the client. (RM5 for every RM1,000 of the total repayment amount)\n2. Rental T&Cs can be found on the master agreement.\n3. Rental Agreement is non-cancellable.'
+    : 'Terms and conditions apply based on rental agreement or sales agreement.';
+}
+
+function onTypeChange(){
+  $('item-list').innerHTML = '';
+  iid = 0;
+  refreshTerms();
+  setTnC();
+  addItem();
+  recalc();
+}
+
+/* ═══════════════════════════════
+   ADD ITEM
+═══════════════════════════════ */
+function addItem(){
+  const id = ++iid;
+  const rental = isRental();
+  const c = cur();
+
+  const card = document.createElement('div');
+  card.className = 'item-card';
+  card.id = 'ic-' + id;
+
+  /* ── ROW 1: Name ── */
+  const nameRow = document.createElement('div');
+  nameRow.className = 'item-name-row';
+
+  const badge = document.createElement('div');
+  badge.className = 'item-badge';
+  badge.textContent = id;
+
+  const nameInp = document.createElement('input');
+  nameInp.type = 'text';
+  nameInp.className = 'item-name-input';
+  nameInp.placeholder = rental ? 'e.g. MacBook Pro 14 M4 Pro — 36 Months Rental' : 'e.g. FortiGate-101F 22 x GE RJ45 ports';
+  nameInp.setAttribute('data-role','name');
+  nameInp.oninput = recalc;
+
+  const delBtn = document.createElement('button');
+  delBtn.className = 'item-del np';
+  delBtn.innerHTML = '&times;';
+  delBtn.onclick = () => { $('ic-'+id).remove(); recalc(); renumber(); };
+
+  nameRow.appendChild(badge);
+  nameRow.appendChild(nameInp);
+  nameRow.appendChild(delBtn);
+
+  /* ── ROW 2: Fields ── */
+  const fieldsRow = document.createElement('div');
+  fieldsRow.className = 'item-fields-row';
+
+  function makeField(labelText, content, isLast){
+    const cell = document.createElement('div');
+    cell.className = 'item-field';
+    if(isLast) cell.style.borderRight = 'none';
+    const lbl = document.createElement('span');
+    lbl.className = 'item-field-label';
+    lbl.textContent = labelText;
+    cell.appendChild(lbl);
+    cell.appendChild(content);
+    return cell;
+  }
+  function makeInput(role, type, val, align, placeholder){
+    const inp = document.createElement('input');
+    inp.type = type || 'text';
+    inp.value = val || '';
+    inp.setAttribute('data-role', role);
+    if(align) inp.style.textAlign = align;
+    if(placeholder) inp.placeholder = placeholder;
+    if(type==='number') inp.min = '0';
+    inp.oninput = recalc;
+    return inp;
+  }
+  function makeComputed(id, highlight){
+    const d = document.createElement('div');
+    d.className = 'item-computed' + (highlight ? ' highlight' : '');
+    d.id = id;
+    d.textContent = '—';
+    return d;
+  }
+
+  if(rental){
+    // Rental: Months | Qty | Price/Month | → Amt/Month | → Contract Total
+    // Grid: 5 columns
+    fieldsRow.style.gridTemplateColumns = '90px 80px 1fr 1fr 1fr';
+
+    const monthsInp = makeInput('months','number','36','center');
+    monthsInp.min = '1';
+    const qtyInp = makeInput('qty','number','1','center');
+    qtyInp.min = '1';
+    const priceInp = makeInput('price','number','0','right');
+    priceInp.step = '0.01';
+
+    fieldsRow.appendChild(makeField('Duration (Months)', monthsInp));
+    fieldsRow.appendChild(makeField('Quantity (Units)', qtyInp));
+    fieldsRow.appendChild(makeField('Price Per Item / Month', priceInp));
+    fieldsRow.appendChild(makeField('Amount / Month  ⟵ auto', makeComputed('amd-'+id)));
+    fieldsRow.appendChild(makeField('Total Contract Amount  ⟵ auto', makeComputed('ctd-'+id, true), true));
+  } else {
+    // Purchase: UOM | Qty | Unit Price | Disc% | → Line Total
+    // Grid: 5 columns
+    fieldsRow.style.gridTemplateColumns = '90px 80px 1fr 100px 1fr';
+
+    const uomInp = makeInput('uom','text','UNIT','center');
+    const qtyInp = makeInput('qty','number','1','center');
+    qtyInp.min = '1';
+    const priceInp = makeInput('price','number','0','right');
+    priceInp.step = '0.01';
+    const discInp = makeInput('disc','number','0','center','0');
+    discInp.max = '100'; discInp.step = '0.1';
+
+    fieldsRow.appendChild(makeField('UOM', uomInp));
+    fieldsRow.appendChild(makeField('Quantity', qtyInp));
+    fieldsRow.appendChild(makeField('Unit Price', priceInp));
+    fieldsRow.appendChild(makeField('Discount %', discInp));
+    fieldsRow.appendChild(makeField('Line Total  ⟵ auto', makeComputed('ltd-'+id, true), true));
+  }
+
+  /* ── ROW 3: Tax + Description toggle ── */
+  const bottomRow = document.createElement('div');
+  bottomRow.className = 'item-bottom-row';
+
+  const taxWrap = document.createElement('div');
+  taxWrap.className = 'item-tax-wrap';
+  const taxLbl = document.createElement('span');
+  taxLbl.className = 'item-tax-label';
+  taxLbl.textContent = 'Service Tax:';
+  const taxSel = document.createElement('select');
+  taxSel.className = 'item-tax-select';
+  taxSel.setAttribute('data-role','tax');
+  taxSel.innerHTML = '<option value="0">No Tax</option><option value="1">SV / Tax applies</option>';
+  taxSel.onchange = recalc;
+  taxWrap.appendChild(taxLbl);
+  taxWrap.appendChild(taxSel);
+
+  const togBtn = document.createElement('button');
+  togBtn.id = 'dtog-' + id;
+  togBtn.className = 'desc-tog np';
+  togBtn.textContent = '▸ Add description / specs';
+  togBtn.onclick = () => toggleDesc(id);
+
+  bottomRow.appendChild(taxWrap);
+  bottomRow.appendChild(togBtn);
+
+  /* ── DESCRIPTION AREA ── */
+  const descArea = document.createElement('div');
+  descArea.className = 'item-desc-area';
+  descArea.id = 'darea-' + id;
+
+  const ta = document.createElement('textarea');
+  ta.id = 'desc-' + id;
+  ta.placeholder = rental
+    ? 'Color: Space Black\nProcessor: Apple M4 Pro chip with 12-core CPU and 16-core GPU\nMemory: 24GB  |  Storage: 512GB\n\nIncluded:\n- AppleCare+\n- All Risk Insurance for IT Equipment\n- Temporary Replacement Unit\n- Level 1 Tech Support by Rentalworks\n- Certified Data Erasure with Erasure Report at End of Lease'
+    : 'Full specifications, included items, notes...';
+  ta.oninput = () => { ta.style.height='auto'; ta.style.height=Math.max(80,ta.scrollHeight)+'px'; };
+  descArea.appendChild(ta);
+
+  /* ── ASSEMBLE ── */
+  card.appendChild(nameRow);
+  card.appendChild(fieldsRow);
+  card.appendChild(bottomRow);
+  card.appendChild(descArea);
+
+  $('item-list').appendChild(card);
+  nameInp.focus();
+  recalc();
+}
+
+function toggleDesc(id){
+  const area = $('darea-'+id);
+  const tog  = $('dtog-'+id);
+  const open = area.classList.contains('open');
+  area.classList.toggle('open', !open);
+  if(!open){
+    const ta = area.querySelector('textarea');
+    ta.style.height='auto'; ta.style.height=Math.max(80,ta.scrollHeight)+'px'; ta.focus();
+    tog.textContent = '▾ Hide description';
+    tog.classList.add('filled');
+  } else {
+    const has = !!area.querySelector('textarea').value.trim();
+    tog.textContent = has ? '▾ Description added ✓' : '▸ Add description / specs';
+    tog.classList.toggle('filled', has);
+  }
+}
+
+function renumber(){
+  document.querySelectorAll('.item-badge').forEach((b,i) => b.textContent = i+1);
+}
+
+/* ═══════════════════════════════
+   RECALC
+═══════════════════════════════ */
+function getItems(){
+  const rental = isRental();
+  const c = cur();
+  return Array.from(document.querySelectorAll('.item-card')).map((card,i) => {
+    const cid    = card.id.replace('ic-','');
+    const name   = card.querySelector('[data-role=name]')?.value || '';
+    const qty    = parseFloat(card.querySelector('[data-role=qty]')?.value) || 1;
+    const price  = parseFloat(card.querySelector('[data-role=price]')?.value) || 0;
+    const hasTax = card.querySelector('[data-role=tax]')?.value === '1';
+    const desc   = card.querySelector('textarea')?.value || '';
+
+    if(rental){
+      const months      = parseFloat(card.querySelector('[data-role=months]')?.value) || 36;
+      const amtMonth    = qty * price;              // Qty × Price/Month
+      const contractAmt = amtMonth * months;        // Amt/Month × Months
+      const taxAmt      = hasTax ? contractAmt * c.tax : 0;
+      // Update computed displays
+      const amd = $('amd-'+cid); if(amd) amd.textContent = fmtN(amtMonth);
+      const ctd = $('ctd-'+cid); if(ctd) ctd.textContent = fmtN(contractAmt);
+      return { no:i+1, cid, name, desc, months, qty, price, uom:'', amtMonth, contractAmt, lineTotal:contractAmt, disc:0, taxAmt, hasTax, rental:true };
+    } else {
+      const uom       = card.querySelector('[data-role=uom]')?.value || 'UNIT';
+      const disc      = parseFloat(card.querySelector('[data-role=disc]')?.value) || 0;
+      const lineTotal = qty * price * (1 - disc/100);
+      const taxAmt    = hasTax ? lineTotal * c.tax : 0;
+      // Update computed display
+      const ltd = $('ltd-'+cid); if(ltd) ltd.textContent = fmtN(lineTotal);
+      return { no:i+1, cid, name, desc, months:0, qty, price, uom, amtMonth:0, contractAmt:0, lineTotal, disc, taxAmt, hasTax, rental:false };
+    }
+  });
+}
+
+function recalc(){
+  const items = getItems();
+  let excl=0, tax=0;
+  items.forEach(it => { excl += it.lineTotal; tax += it.taxAmt; });
+  $('t-excl').textContent  = fmt(excl);
+  $('t-tax').textContent   = fmt(tax);
+  $('t-grand').textContent = fmt(excl+tax);
+}
+
+/* ═══════════════════════════════
+   CLEAR
+═══════════════════════════════ */
+function clearAll(){
+  if(!confirm('Clear everything and start fresh?')) return;
+  $('item-list').innerHTML = '';
+  iid = 0;
+  ['cco','cname','cemail','cphone','caddr','ctel','cfax','your-ref','remarks','pic'].forEach(i => $(i).value='');
+  $('hs-result').className='alert';
+  document.querySelector('input[value=rental]').checked=true;
+  refreshTerms(); setTnC(); addItem();
+}
+
+/* ═══════════════════════════════
+   PDF BUILDER
+═══════════════════════════════ */
+function buildPDF(){
+  const rental = isRental();
+  const c      = cur();
+  const items  = getItems();
+  let excl=0, taxT=0;
+  items.forEach(it => { excl+=it.lineTotal; taxT+=it.taxAmt; });
+  const grand = excl + taxT;
+
+  const qno   = gv('qno'),  qdate = gv('qdate'), ref  = gv('your-ref');
+  const payT  = gv('payment-term'),  pic  = gv('pic');
+  const cco   = gv('cco'),   caddr = gv('caddr').replace(/\n/g,'<br>');
+  const ctel  = gv('ctel'),  cfax  = gv('cfax');
+  const rem   = gv('remarks').replace(/\n/g,'<br>');
+  const tnc   = gv('tandc').replace(/\n/g,'<br>');
+
+  const th = `padding:5px 6px;background:#f0f0f0;border:1px solid #bbb;font-size:7.5pt;font-weight:bold;text-align:center;`;
+  const td = (e='') => `padding:5px 6px;vertical-align:top;border:1px solid #ccc;${e}`;
+
+  const thead = rental
+    ? `<tr>
+        <th style="${th}">Item No.</th>
+        <th style="${th}">Description</th>
+        <th style="${th}">Month</th>
+        <th style="${th}">Items Qty</th>
+        <th style="${th}">Price Per Month</th>
+        <th style="${th}">Amount / Month<br>${c.sym}</th>
+        <th style="${th}">Tax</th>
+        <th style="${th}">Total Contract Amount<br>${c.sym}</th>
+      </tr>`
+    : `<tr>
+        <th style="${th}">Item No.</th>
+        <th style="${th}">Description</th>
+        <th style="${th}">UOM</th>
+        <th style="${th}">Qty</th>
+        <th style="${th}">Unit Price<br>${c.sym}</th>
+        <th style="${th}">Disc. %</th>
+        <th style="${th}">Tax</th>
+        <th style="${th}">Amount<br>${c.sym}</th>
+      </tr>`;
+
+  const cg = rental
+    ? `<colgroup><col style="width:4%"><col style="width:33%"><col style="width:5%"><col style="width:6%"><col style="width:12%"><col style="width:12%"><col style="width:5%"><col style="width:13%"></colgroup>`
+    : `<colgroup><col style="width:4%"><col style="width:42%"><col style="width:6%"><col style="width:5%"><col style="width:12%"><col style="width:6%"><col style="width:5%"><col style="width:12%"></colgroup>`;
+
+  const rows = items.map(it => {
+    const spec = it.desc.trim()
+      ? '<br><span style="font-size:7pt;color:#444;line-height:1.6;">' + it.desc.replace(/\n/g,'<br>') + '</span>'
+      : '';
+    const cell = `<strong>${it.name||'—'}</strong>${spec}`;
+    const tv   = it.hasTax ? 'SV' : '';
+    const ds   = it.disc > 0 ? it.disc + '%' : '';
+    return rental
+      ? `<tr>
+          <td style="${td('text-align:center')}">${it.no}</td>
+          <td style="${td()}">${cell}</td>
+          <td style="${td('text-align:center')}">${it.months}</td>
+          <td style="${td('text-align:center')}">${it.qty}</td>
+          <td style="${td('text-align:right')}">${fmtN(it.price)}</td>
+          <td style="${td('text-align:right')}">${fmtN(it.amtMonth)}</td>
+          <td style="${td('text-align:center')}">${tv}</td>
+          <td style="${td('text-align:right;font-weight:bold')}">${fmtN(it.contractAmt)}</td>
+        </tr>`
+      : `<tr>
+          <td style="${td('text-align:center')}">${it.no}</td>
+          <td style="${td()}">${cell}</td>
+          <td style="${td('text-align:center')}">${it.uom}</td>
+          <td style="${td('text-align:center')}">${it.qty}</td>
+          <td style="${td('text-align:right')}">${fmtN(it.price)}</td>
+          <td style="${td('text-align:center')}">${ds}</td>
+          <td style="${td('text-align:center')}">${tv}</td>
+          <td style="${td('text-align:right;font-weight:bold')}">${fmtN(it.lineTotal)}</td>
+        </tr>`;
+  }).join('');
+
+  const logo = `<svg width="190" height="68" viewBox="0 0 190 68" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="32" cy="34" r="30" fill="#C0202A"/>
+    <text x="32" y="43" text-anchor="middle" fill="white" font-size="32" font-weight="bold" font-family="Georgia,serif">R</text>
+    <text x="70" y="19" font-size="13.5" font-weight="bold" fill="#C0202A" font-family="Arial,sans-serif">Rentalworks</text>
+    <text x="70" y="32" font-size="5.8" fill="#666" font-family="Arial,sans-serif" letter-spacing="1">SUSTAINABLE TECHNOLOGY</text>
+    <text x="70" y="43" font-size="5.8" fill="#666" font-family="Arial,sans-serif" letter-spacing="1">LIFECYCLE MANAGEMENT</text>
+  </svg>`;
+
+  return `<div style="font-family:Arial,Helvetica,sans-serif;font-size:8.5pt;color:#000;">
+    <table style="width:100%;border-collapse:collapse;margin-bottom:5px;">
+      <tr>
+        <td style="width:44%;vertical-align:bottom;">${logo}</td>
+        <td style="vertical-align:top;text-align:right;font-size:7.5pt;line-height:1.65;">
+          <strong style="font-size:11pt;color:#C0202A;">RENTALWORKS SDN BHD</strong><span style="font-size:8pt;color:#555;">(767231-D)</span><br>
+          Microsite: www.rentalworks.com.my<br>
+          Main Office: Suite 7.03A, Level 7, Menara Trend, IMS, No. 68, Jalan Batai Laut 4,<br>
+          Taman Intan, 41300 Klang, Selangor, Malaysia<br>
+          Phone: 03-33436698 &nbsp; Fax: 03-33449697<br>
+          SST number: B10-2407-32000078
+        </td>
+      </tr>
+    </table>
+    <hr style="border:none;border-top:2px solid #C0202A;margin-bottom:8px;">
+    <table style="width:100%;border-collapse:collapse;margin-bottom:8px;">
+      <tr>
+        <td style="width:54%;vertical-align:top;">
+          <div style="font-size:16pt;font-weight:bold;letter-spacing:2px;margin-bottom:8px;">QUOTATION</div>
+          <div style="border:1px solid #888;padding:6px 10px;display:inline-block;min-width:220px;font-size:9.5pt;font-weight:bold;">${cco||'&nbsp;'}</div>
+          ${caddr?`<div style="font-size:8pt;margin-top:4px;color:#333;line-height:1.65;">${caddr}</div>`:''}
+          <div style="margin-top:7px;font-size:8pt;">TEL : ${ctel||'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'} &nbsp;&nbsp; FAX : ${cfax||'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'}</div>
+        </td>
+        <td style="vertical-align:top;">
+          <table style="border-collapse:collapse;float:right;font-size:8.5pt;">
+            <tr><td style="padding:2px 5px;font-weight:bold;">No.</td><td style="padding:2px 5px;font-weight:bold;color:#C0202A;font-size:11pt;">: ${qno}</td></tr>
+            <tr><td style="padding:2px 5px;">Your Ref.</td><td style="padding:2px 5px;">: ${ref||'&nbsp;'}</td></tr>
+            <tr><td style="padding:2px 5px;">Date</td><td style="padding:2px 5px;">: ${qdate}</td></tr>
+            <tr><td style="padding:2px 5px;">Payment Term</td><td style="padding:2px 5px;">: ${payT}</td></tr>
+            <tr><td style="padding:2px 5px;">Currency</td><td style="padding:2px 5px;">: ${c.code}</td></tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+    <p style="font-size:8.5pt;margin-bottom:6px;">Thank you for your inquiry. We are pleased to submit our quote as follows:</p>
+    <table style="width:100%;border-collapse:collapse;font-size:8pt;margin-bottom:10px;">${cg}<thead>${thead}</thead><tbody>${rows}</tbody></table>
+    ${rem?`<div style="margin-bottom:10px;font-size:8pt;"><strong>Remarks:</strong><br>${rem}</div>`:''}
+    <div style="page-break-inside:avoid;">
+      <table style="width:100%;border-collapse:collapse;margin-bottom:14px;">
+        <tr>
+          <td style="vertical-align:top;width:55%;font-size:7.5pt;padding-right:14px;">
+            ${tnc?`<strong style="font-size:8pt;">Terms &amp; Conditions</strong><br>${tnc}`:''}
+          </td>
+          <td style="vertical-align:top;text-align:right;width:45%;">
+            <table style="border-collapse:collapse;float:right;min-width:270px;font-size:8.5pt;">
+              <tr><td style="padding:4px 8px;text-align:right;">Total Excl. ${c.taxLbl}:</td><td style="padding:4px 12px;text-align:right;font-weight:bold;border:1px solid #999;min-width:96px;">${fmtN(excl)}</td></tr>
+              <tr><td style="padding:4px 8px;text-align:right;">${c.taxLbl}:</td><td style="padding:4px 12px;text-align:right;font-weight:bold;border:1px solid #999;">${fmtN(taxT)}</td></tr>
+              <tr><td style="padding:6px 8px;text-align:right;font-weight:bold;font-size:9pt;">Total Amount (${c.code}):</td><td style="padding:6px 12px;text-align:right;font-weight:bold;border:2px solid #555;font-size:9pt;">${fmtN(grand)}</td></tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+      <table style="width:100%;border-collapse:collapse;font-size:8.5pt;margin-top:22px;">
+        <tr>
+          <td style="width:50%;vertical-align:top;">
+            <div>Yours Truly,</div>
+            <div style="margin-top:38px;border-top:1px solid #000;width:185px;padding-top:4px;">
+              <strong>${pic||'RENTALWORKS SDN BHD'}</strong><br>RENTALWORKS SDN BHD
+            </div>
+          </td>
+          <td style="width:50%;vertical-align:top;">
+            <div>Confirmation &amp; acceptance on quotation</div>
+            <div style="margin-top:38px;border-top:1px solid #000;width:205px;padding-top:4px;">
+              Stamp &amp; Signature<br>Person incharge :&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>Date :
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>`;
+}
+
+function doExport(){
+  $('po').innerHTML = buildPDF();
+  document.title = gv('qno') || 'Quote';
+  window.print();
+}
+
+/* ═══════════════════════════════
+   HUBSPOT — all calls via Netlify
+   proxy to bypass CORS restriction
+═══════════════════════════════ */
+function toggleHsPanel(){ $('hs-panel').classList.toggle('open'); }
+document.addEventListener('click', e => {
+  const p=$('hs-panel'), b=$('hs-status-btn');
+  if(p.classList.contains('open')&&!p.contains(e.target)&&!b.contains(e.target)) p.classList.remove('open');
+});
+function setHsStat(s,l){ $('hs-dot').className='dot'+(s?' '+s:''); $('hs-lbl').textContent=l; }
+function showFb(t,m){ const e=$('hs-fb'); e.className='hs-fb '+t; e.textContent=m; }
+function showRes(t,h){ const e=$('hs-result'); e.className='alert '+t; e.innerHTML=h; e.scrollIntoView({behavior:'smooth',block:'nearest'}); }
+
+// Route all HubSpot calls through the Netlify serverless proxy (avoids CORS)
+async function hsApi(method, path, payload){
+  const r = await fetch('/.netlify/functions/hs', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ method, path, payload })
+  });
+  const data = await r.json().catch(() => ({}));
+  return { ok: r.ok, status: r.status, data };
+}
+
+async function testConn(){
+  showFb('loading','Testing connection to HubSpot…');
+  try{
+    const { ok, data } = await hsApi('GET', '/crm/v3/objects/contacts?limit=1');
+    if(ok){
+      showFb('ok','✓ Connected to HubSpot successfully!');
+      setHsStat('ok','HubSpot Connected');
+      $('hs-push-btn').disabled = false;
+    } else {
+      showFb('err','✗ ' + (data.error || data.message || 'Connection failed. Check HUBSPOT_TOKEN in Netlify settings.'));
+      setHsStat('err','HubSpot Error');
+    }
+  } catch(e){ showFb('err','✗ ' + e.message); }
+}
+
+// Auto-check connection when page loads
+window.addEventListener('load', () => {
+  setTimeout(async () => {
+    try {
+      const { ok } = await hsApi('GET', '/crm/v3/objects/contacts?limit=1');
+      if(ok){ setHsStat('ok','HubSpot Connected'); $('hs-push-btn').disabled=false; }
+      else { setHsStat('err','HubSpot — check setup'); }
+    } catch { /* running locally — skip */ }
+  }, 800);
+});
+
+async function pushHS(){
+  const co=gv('cco'), nm=gv('cname'), em=gv('cemail');
+  if(!co&&!nm){ alert('Enter a customer name or company first.'); return; }
+  const btn=$('hs-push-btn'); btn.disabled=true; btn.textContent='Pushing…';
+  showRes('loading','⏳ Connecting to HubSpot…');
+  try{
+    // 1. Find or create contact
+    let cid = null;
+    if(em){
+      const { ok, data } = await hsApi('POST', '/crm/v3/objects/contacts/search', {
+        filterGroups:[{filters:[{propertyName:'email',operator:'EQ',value:em}]}], limit:1
+      });
+      if(ok && data.results?.length) cid = data.results[0].id;
+    }
+    if(!cid){
+      const p = (nm||co).split(' ');
+      const { ok, data } = await hsApi('POST', '/crm/v3/objects/contacts', {
+        properties:{ firstname:p[0], lastname:p.slice(1).join(' '), email:em||'', phone:gv('cphone'), company:co }
+      });
+      if(!ok) throw new Error(data.message || 'Failed to create contact');
+      cid = data.id;
+    }
+    // 2. Create deal
+    showRes('loading','⏳ Creating deal in HubSpot…');
+    const items=getItems(); let ex=0,tx=0;
+    items.forEach(it=>{ ex+=it.lineTotal; tx+=it.taxAmt; });
+    const gr=ex+tx; const c=cur();
+    const dn = gv('qno') + ' — ' + (co||nm);
+    const { ok:dok, data:dj } = await hsApi('POST', '/crm/v3/objects/deals', {
+      properties:{
+        dealname:dn, amount:gr.toFixed(2),
+        closedate:(gv('qvalid')||fmtDate(new Date()))+'T00:00:00.000Z',
+        dealstage:'presentationscheduled', pipeline:'default'
+      }
+    });
+    if(!dok) throw new Error(dj.message || 'Failed to create deal');
+    const did = dj.id;
+    // 3. Link contact to deal
+    await hsApi('PUT', `/crm/v4/objects/deals/${did}/associations/contacts/${cid}`,
+      [{ associationCategory:'HUBSPOT_DEFINED', associationTypeId:5 }]
+    );
+    // 4. Build note with full quote details
+    showRes('loading','⏳ Attaching quote note…');
+    const nl = [
+      `RENTALWORKS QUOTE — ${gv('qno')} [${c.code}]`,
+      `Date: ${gv('qdate')}  |  Valid Until: ${gv('qvalid')}`,
+      `Customer: ${co} ${nm}`,
+      `Quote Type: ${isRental()?'RENTAL / LEASING':'PURCHASE / HW SUPPLY'}`,
+      `Payment Term: ${gv('payment-term')}`,
+      ``, `--- LINE ITEMS ---`
+    ];
+    items.forEach(it => {
+      nl.push(isRental()
+        ? `${it.no}. ${it.name} | ${it.qty} units x ${c.sym}${fmtN(it.price)}/mo x ${it.months} months = ${c.sym}${fmtN(it.contractAmt)}${it.hasTax?' [+Tax]':''}`
+        : `${it.no}. ${it.name} | ${it.qty} ${it.uom} x ${c.sym}${fmtN(it.price)}${it.disc>0?' - '+it.disc+'% disc':''} = ${c.sym}${fmtN(it.lineTotal)}${it.hasTax?' [+Tax]':''}`
+      );
+    });
+    nl.push(``, `Total Excl Tax : ${c.sym}${fmtN(ex)}`, `Tax           : ${c.sym}${fmtN(tx)}`, `GRAND TOTAL   : ${c.sym}${fmtN(gr)}`);
+    if(gv('remarks')) nl.push(``, `Remarks: ${gv('remarks')}`);
+    const { ok:nok, data:nj } = await hsApi('POST', '/crm/v3/objects/notes', {
+      properties:{ hs_note_body:nl.join('
+'), hs_timestamp:Date.now().toString() }
+    });
+    if(!nok) throw new Error(nj.message || 'Failed to create note');
+    const nid = nj.id;
+    await hsApi('PUT', `/crm/v4/objects/notes/${nid}/associations/deals/${did}`,
+      [{ associationCategory:'HUBSPOT_DEFINED', associationTypeId:214 }]
+    );
+    await hsApi('PUT', `/crm/v4/objects/notes/${nid}/associations/contacts/${cid}`,
+      [{ associationCategory:'HUBSPOT_DEFINED', associationTypeId:202 }]
+    );
+    showRes('ok', `✓ Deal "<strong>${dn}</strong>" created in HubSpot with full quote note attached. <a href="https://app.hubspot.com/contacts/deals/${did}" target="_blank">View Deal in HubSpot →</a>`);
+  } catch(e) {
+    showRes('err','✗ ' + e.message);
+  } finally {
+    btn.disabled=false; btn.textContent='Push to HubSpot';
+  }
+}
+</script>
+</body>
+</html>
