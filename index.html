@@ -969,14 +969,15 @@ async function testConn(){
   } catch(e){ showFb('err','✗ ' + e.message); }
 }
 
-// Auto-check connection when page loads
+// Auto-check connection when page loads (only on Netlify, not local)
 window.addEventListener('load', () => {
+  if(window.location.protocol === 'file:') return; // skip when opened as local file
   setTimeout(async () => {
     try {
       const { ok } = await hsApi('GET', '/crm/v3/objects/contacts?limit=1');
       if(ok){ setHsStat('ok','HubSpot Connected'); $('hs-push-btn').disabled=false; }
       else { setHsStat('err','HubSpot — check setup'); }
-    } catch { /* running locally — skip */ }
+    } catch(e) { /* function not available yet — skip */ }
   }, 800);
 });
 
