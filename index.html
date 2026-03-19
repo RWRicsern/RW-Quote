@@ -263,6 +263,24 @@ select{
 .hs-help a{color:var(--hs);text-decoration:none;}
 .hs-close{position:absolute;top:13px;right:14px;background:none;border:none;font-size:18px;color:var(--mid);cursor:pointer;}
 
+/* -- DEAL SEARCH */
+.deal-search-wrap{display:flex;gap:8px;margin-bottom:12px;}
+.deal-search-wrap input{flex:1;}
+.deal-search-btn{padding:8px 16px;border-radius:7px;border:1.5px solid var(--border);background:transparent;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;color:var(--mid);cursor:pointer;white-space:nowrap;transition:all .14s;flex-shrink:0;}
+.deal-search-btn:hover{border-color:var(--hs);color:var(--hs);}
+.deal-results{border:1.5px solid var(--border);border-radius:8px;overflow:hidden;display:none;}
+.deal-result-item{padding:11px 14px;cursor:pointer;border-bottom:1px solid var(--border);transition:background .12s;display:flex;justify-content:space-between;align-items:center;}
+.deal-result-item:last-child{border-bottom:none;}
+.deal-result-item:hover{background:var(--surface);}
+.deal-result-item.selected{background:var(--red-lt);border-left:3px solid var(--red);}
+.deal-name{font-size:13px;font-weight:600;color:var(--text);}
+.deal-meta{font-size:11px;color:var(--mid);margin-top:2px;}
+.deal-amount{font-size:12px;font-weight:600;color:var(--mid);white-space:nowrap;margin-left:12px;}
+.selected-deal-badge{display:none;align-items:center;gap:8px;background:var(--red-lt);border:1.5px solid var(--red);border-radius:8px;padding:10px 14px;margin-top:10px;}
+.selected-deal-badge.show{display:flex;}
+.selected-deal-badge .sdb-name{font-size:13px;font-weight:600;color:var(--red);}
+.selected-deal-badge .sdb-clear{background:none;border:none;color:var(--red);cursor:pointer;font-size:16px;margin-left:auto;padding:0;line-height:1;}
+
 /* -- PRINT ---------------------------- */
 @page{size:A4;margin:13mm 15mm;}
 @media screen{.po{display:none!important;}}
@@ -402,7 +420,30 @@ select{
     </div>
   </div>
 
-  <!-- 5. LINE ITEMS -->
+  <!-- 5. HUBSPOT DEAL -->
+  <div class="card">
+    <div class="ch">
+      <span class="ct">5 -- Link to HubSpot Deal</span>
+      <span style="font-size:11px;color:var(--mid)">Optional -- attach this quote to an existing deal</span>
+    </div>
+    <div class="cb">
+      <div class="deal-search-wrap">
+        <input type="text" id="deal-search-input" placeholder="Search deal by name..." onkeydown="if(event.key==='Enter') searchDeals()">
+        <button class="deal-search-btn" onclick="searchDeals()" id="deal-search-btn">Search Deals</button>
+      </div>
+      <div class="deal-results" id="deal-results"></div>
+      <div class="selected-deal-badge" id="selected-deal-badge">
+        <div>
+          <div class="sdb-name" id="sdb-name"></div>
+          <div style="font-size:11px;color:var(--mid);margin-top:2px;" id="sdb-meta"></div>
+        </div>
+        <button class="sdb-clear" onclick="clearSelectedDeal()" title="Remove selection">x</button>
+      </div>
+      <div style="font-size:11px;color:var(--mid);margin-top:10px;">If no deal is selected, the quote will still be created in HubSpot but not linked to a deal.</div>
+    </div>
+  </div>
+
+  <!-- 6. LINE ITEMS -->
   <div class="card">
     <div class="ch">
       <span class="ct">5 - Line Items</span>
@@ -421,13 +462,13 @@ select{
     </div>
   </div>
 
-  <!-- 6. REMARKS -->
+  <!-- 7. REMARKS -->
   <div class="card">
     <div class="ch"><span class="ct">6 - Remarks</span></div>
     <div class="cb"><textarea id="remarks" rows="3" placeholder="e.g. Price quoted based on quantity for year 2025. Price for 2026 may change..."></textarea></div>
   </div>
 
-  <!-- 7. T&C -->
+  <!-- 8. T&C -->
   <div class="card">
     <div class="ch"><span class="ct">7 - Terms &amp; Conditions</span></div>
     <div class="cb"><textarea id="tandc" rows="4"></textarea></div>
@@ -922,6 +963,69 @@ function buildPDF(){
   </div>`;
 }
 
+/* ═══════════════════════════════
+   DEAL SEARCH
+═══════════════════════════════ */
+let selectedDeal = null;
+
+function clearSelectedDeal(){
+  selectedDeal = null;
+  document.getElementById('selected-deal-badge').classList.remove('show');
+  document.getElementById('deal-search-input').value = '';
+  document.getElementById('deal-results').style.display = 'none';
+  document.getElementById('deal-results').innerHTML = '';
+}
+
+async function searchDeals(){
+  const q = document.getElementById('deal-search-input').value.trim();
+  if(!q){ alert('Enter a deal name to search.'); return; }
+  const btn = document.getElementById('deal-search-btn');
+  btn.textContent = 'Searching...'; btn.disabled = true;
+  const resultsEl = document.getElementById('deal-results');
+  resultsEl.style.display = 'none'; resultsEl.innerHTML = '';
+  try{
+    const { ok, data } = await hsApi('POST', '/crm/v3/objects/deals/search', {
+      filterGroups:[{ filters:[{ propertyName:'dealname', operator:'CONTAINS_TOKEN', value:q }] }],
+      properties:['dealname','amount','dealstage','closedate','hubspot_owner_id'],
+      limit: 10
+    });
+    if(!ok) throw new Error(data.message || 'Search failed');
+    if(!data.results || data.results.length === 0){
+      resultsEl.innerHTML = '<div style="padding:14px;font-size:13px;color:var(--mid);text-align:center;">No deals found for "' + q + '"</div>';
+      resultsEl.style.display = 'block';
+      return;
+    }
+    resultsEl.innerHTML = '';
+    data.results.forEach(deal => {
+      const name   = deal.properties.dealname || 'Unnamed Deal';
+      const amt    = deal.properties.amount ? 'RM ' + parseFloat(deal.properties.amount).toLocaleString('en-MY',{minimumFractionDigits:2,maximumFractionDigits:2}) : '';
+      const stage  = deal.properties.dealstage || '';
+      const div = document.createElement('div');
+      div.className = 'deal-result-item' + (selectedDeal && selectedDeal.id === deal.id ? ' selected' : '');
+      div.innerHTML = '<div><div class="deal-name">' + name + '</div><div class="deal-meta">ID: ' + deal.id + (stage ? '  |  Stage: ' + stage : '') + '</div></div>' + (amt ? '<div class="deal-amount">' + amt + '</div>' : '');
+      div.onclick = () => selectDeal(deal, name, amt, stage);
+      resultsEl.appendChild(div);
+    });
+    resultsEl.style.display = 'block';
+  } catch(e){
+    resultsEl.innerHTML = '<div style="padding:14px;font-size:13px;color:var(--red);">Error: ' + e.message + '</div>';
+    resultsEl.style.display = 'block';
+  } finally {
+    btn.textContent = 'Search Deals'; btn.disabled = false;
+  }
+}
+
+function selectDeal(deal, name, amt, stage){
+  selectedDeal = deal;
+  // Highlight selected
+  document.querySelectorAll('.deal-result-item').forEach(el => el.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+  // Show badge
+  document.getElementById('sdb-name').textContent = name;
+  document.getElementById('sdb-meta').textContent = 'Deal ID: ' + deal.id + (amt ? '  |  ' + amt : '') + (stage ? '  |  ' + stage : '');
+  document.getElementById('selected-deal-badge').classList.add('show');
+}
+
 function doExport(){
   $('po').innerHTML = buildPDF();
   document.title = gv('qno') || 'Quote';
@@ -1057,7 +1161,16 @@ async function pushHS(){
       [{ associationCategory:'HUBSPOT_DEFINED', associationTypeId:702 }]
     );
 
-    showRes('ok', 'Quote <strong>' + quoteTitle + '</strong> created in HubSpot with ' + lineItemIds.length + ' line item(s). <a href="https://app.hubspot.com/quotes/' + qid + '" target="_blank">View Quote in HubSpot -></a>');
+    // 6. Associate quote to selected deal (if one was chosen)
+    if(selectedDeal){
+      showRes('loading','Linking quote to deal...');
+      await hsApi('PUT', '/crm/v4/objects/quotes/' + qid + '/associations/deals/' + selectedDeal.id,
+        [{ associationCategory:'HUBSPOT_DEFINED', associationTypeId:64 }]
+      );
+    }
+
+    const dealInfo = selectedDeal ? ' and linked to deal <strong>' + (selectedDeal.properties.dealname||selectedDeal.id) + '</strong>' : '';
+    showRes('ok', 'Quote <strong>' + quoteTitle + '</strong> created in HubSpot with ' + lineItemIds.length + ' line item(s)' + dealInfo + '. <a href="https://app.hubspot.com/quotes/' + qid + '" target="_blank">View Quote -></a>');
   } catch(e) {
     showRes('err','X ' + e.message);
   } finally {
