@@ -446,7 +446,7 @@ select{
   <!-- 6. LINE ITEMS -->
   <div class="card">
     <div class="ch">
-      <span class="ct">5 - Line Items</span>
+      <span class="ct">6 -- Line Items</span>
       <span style="font-size:11px;color:var(--mid)">Shaded cells are calculated automatically</span>
     </div>
     <div class="cb" style="padding-bottom:16px;">
@@ -1017,9 +1017,8 @@ async function searchDeals(){
 
 function selectDeal(deal, name, amt, stage){
   selectedDeal = deal;
-  // Highlight selected
-  document.querySelectorAll('.deal-result-item').forEach(el => el.classList.remove('selected'));
-  event.currentTarget.classList.add('selected');
+  // Hide search results
+  document.getElementById('deal-results').style.display = 'none';
   // Show badge
   document.getElementById('sdb-name').textContent = name;
   document.getElementById('sdb-meta').textContent = 'Deal ID: ' + deal.id + (amt ? '   |   ' + amt : '');
