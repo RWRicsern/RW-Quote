@@ -512,8 +512,6 @@ window.onload = () => {
   $('qvalid').value = fmtDate(later);
   refreshTerms();
   setTnC();
-  const tok = localStorage.getItem('rw_tok');
-  if(tok){ $('hs-token').value=tok; setHsStat('ok','HubSpot Connected'); $('hs-push-btn').disabled=false; }
   addItem();
 };
 
